@@ -56,7 +56,6 @@ svg {
 .content {
   margin: auto;
   max-width: 1200px;
-  margin: 0 5rem;
   grid-column: 2;
   flex: 1;
 }

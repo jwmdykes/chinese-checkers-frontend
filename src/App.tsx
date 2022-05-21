@@ -1,11 +1,15 @@
 import React from 'react';
 import './App.css';
-import Example from './Example/Example';
+import Flex from './components/Flex/Flex';
+import Grid from './components/Grid/Grid';
+import SidebarLayout from './components/SidebarLayout/SidebarLayout';
 
 function App() {
   return (
     <div className='App'>
-      <Example></Example>
+      {/* <Flex></Flex> */}
+      {/* <Grid></Grid> */}
+      <SidebarLayout></SidebarLayout>
     </div>
   );
 }

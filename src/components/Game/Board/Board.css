@@ -1,0 +1,5 @@
+.Board {
+  height: 100%;
+  width: 100%;
+  border: 25px solid hsl(236, 69%, 63%);
+}

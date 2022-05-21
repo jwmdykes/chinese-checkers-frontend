@@ -87,6 +87,7 @@ h1 {
   padding: 0.5rem 0.75rem;
 
   overflow-y: scroll;
+  /* z-index: 13; */
 }
 
 .sidebar .menu-icon {

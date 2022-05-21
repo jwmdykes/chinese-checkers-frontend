@@ -49,7 +49,6 @@ class SidebarLayout extends React.Component<Props, State> {
   };
 
   render() {
-    console.log('rendering');
     return (
       <div className='SidebarLayout' data-testid='SidebarLayout'>
         <header className='header'>
@@ -75,13 +74,6 @@ class SidebarLayout extends React.Component<Props, State> {
                 return <div className='sidebar-item'>Item {i}</div>;
               })}
             </aside>
-            {/* {this.state.menuVisible && (
-            <aside className='sidebar'>
-              <div className='sidebar-item'>Testing 1234</div>
-              <div className='sidebar-item'>Another one</div>
-              <div className='sidebar-item'>And another</div>
-            </aside>
-          )} */}
           </div>
           <main className='content'>
             <h1>Title</h1>

@@ -3,6 +3,7 @@ import './Board.css';
 
 interface RowProps {
   row: Array<Number>;
+  selected: Array<boolean>;
   rowNumber: Number;
   colors: Array<String>;
   clickCallback(e: React.MouseEvent): void;
@@ -18,9 +19,15 @@ class Row extends React.Component<RowProps, RowState> {
           const color = '' + this.props.colors[+value];
           return (
             <span
+              key={+index}
               className='BallHole'
               id={JSON.stringify({ x: index, y: this.props.rowNumber })}
-              style={{ background: color }}
+              style={{
+                background: color,
+                border: this.props.selected[+index]
+                  ? '2px solid var(--ball-border-color)'
+                  : 'none',
+              }}
               onClick={this.props.clickCallback}
             ></span>
           );
@@ -31,54 +38,29 @@ class Row extends React.Component<RowProps, RowState> {
 }
 
 interface BoardProps {
-  board: Array<[Number, Number]>;
+  rows: Array<Array<Number>>;
+  selected: Array<Array<boolean>>;
+  colors: Array<String>;
+  onClick(e: React.MouseEvent): void;
 }
 
-interface BoardState {
-  rows: Array<Array<Number>>;
-}
+interface BoardState {}
 
 class Board extends React.Component<BoardProps, BoardState> {
-  rowLengths: Array<Number>;
-  colors: Array<String>;
-  constructor(props: BoardProps) {
-    super(props);
-    this.rowLengths = [
-      1, 2, 3, 4, 13, 12, 11, 10, 9, 10, 11, 12, 13, 4, 3, 2, 1,
-    ];
-    this.colors = ['hsl(240, 72%, 67%)', 'hsl(240, 80%, 40%)'];
-    let rows: Array<Array<Number>> = Array<Array<Number>>(17);
-    for (let i = 0; i < 17; i++) {
-      rows[i] = Array(this.rowLengths[i]).fill(0);
-    }
-    this.state = {
-      rows: rows,
-    };
-  }
-
-  onClick = (e: React.MouseEvent) => {
-    const target = e.nativeEvent.target as HTMLSpanElement;
-    const clicked = JSON.parse(target.id);
-    let newRows = JSON.parse(JSON.stringify(this.state.rows)); // don't modify in place
-    newRows[clicked.y][clicked.x] = newRows[clicked.y][clicked.x] == 1 ? 0 : 1;
-    this.setState({
-      rows: newRows,
-    });
-    return;
-  };
-
   render() {
     // console.log(this.state.rows);
+    console.log(this.props.selected);
     return (
       <div className='Board'>
-        {this.state.rows.map((value: Array<Number>, index: Number) => {
+        {this.props.rows.map((value: Array<Number>, index: Number) => {
           return (
             <Row
               key={+index}
               row={value}
+              selected={this.props.selected[+index]}
               rowNumber={index}
-              colors={this.colors}
-              clickCallback={this.onClick}
+              colors={this.props.colors}
+              clickCallback={this.props.onClick}
             ></Row>
           );
         })}

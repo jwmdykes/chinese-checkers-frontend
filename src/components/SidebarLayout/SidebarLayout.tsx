@@ -71,7 +71,11 @@ class SidebarLayout extends React.Component<Props, State> {
                 {menuSvg}
               </div>
               {Array.from(Array(30).keys()).map((i) => {
-                return <div className='sidebar-item'>Item {i}</div>;
+                return (
+                  <div key={+i} className='sidebar-item'>
+                    Item {i}
+                  </div>
+                );
               })}
             </aside>
           </div>

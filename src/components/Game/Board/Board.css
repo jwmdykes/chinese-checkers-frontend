@@ -1,11 +1,15 @@
 :root {
+  --board-background-color: hsl(27, 55%, 35%);
+  --board-border-color: hsl(28, 86%, 8%);
+  --ball-border-color: white;
 }
 
 .Board {
   height: 100%;
   width: 60%;
   margin: auto;
-  border: 1em solid hsl(236, 69%, 63%);
+  border: 1em solid var(--board-border-color);
+  background: var(--board-background-color);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,5 +25,5 @@
   height: 35px;
   margin: 8px 16px;
   border-radius: 50%;
-  background: hsl(240, 72%, 67%);
+  background: hsl(0, 0%, 0%);
 }

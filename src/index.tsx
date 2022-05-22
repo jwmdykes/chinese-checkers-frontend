@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 
 import './index.css';
-import Flex from './components/Flex/Flex';
-import Grid from './components/Grid/Grid';
-import SidebarLayout from './components/SidebarLayout/SidebarLayout';
 import Game from './components/Game/Game';
+import * as Settings from './components/Game/gameSettings';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,7 +14,11 @@ root.render(
     {/* <Flex></Flex> */}
     {/* <Grid></Grid> */}
     {/* <SidebarLayout></SidebarLayout> */}
-    <Game></Game>
+    <Game
+      players={[Settings.Player1, Settings.Player2]}
+      availColors={Settings.colors}
+      isSinglePlayer={true}
+    ></Game>
   </React.StrictMode>
 );
 

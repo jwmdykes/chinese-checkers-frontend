@@ -1,15 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import './index.css';
+import Flex from './components/Flex/Flex';
+import Grid from './components/Grid/Grid';
+import SidebarLayout from './components/SidebarLayout/SidebarLayout';
+import Game from './components/Game/Game';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <Flex></Flex> */}
+    {/* <Grid></Grid> */}
+    {/* <SidebarLayout></SidebarLayout> */}
+    <Game></Game>
   </React.StrictMode>
 );
 

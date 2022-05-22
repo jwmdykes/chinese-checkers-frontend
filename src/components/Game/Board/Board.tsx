@@ -17,7 +17,7 @@ class Row extends React.Component<RowProps> {
           const color = '' + this.props.colors[+value];
           const selected = this.props.selected[+index]
             ? '2px solid var(--ball-border-color)'
-            : 'none';
+            : '2px solid var(--ball-default-border-color)';
           return (
             <span
               key={+index}

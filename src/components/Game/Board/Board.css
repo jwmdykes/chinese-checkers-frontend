@@ -1,6 +1,7 @@
 :root {
   --board-background-color: hsl(27, 55%, 35%);
   --board-border-color: hsl(28, 86%, 8%);
+  --ball-default-border-color: black;
   --ball-border-color: white;
 }
 
@@ -10,6 +11,7 @@
   margin: auto;
   border: 1em solid var(--board-border-color);
   background: var(--board-background-color);
+  box-shadow: inset 1px 3px 8px 5px rgba(0, 0, 0, 0.86);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,5 +27,7 @@
   height: 35px;
   margin: 8px 16px;
   border-radius: 50%;
-  background: hsl(0, 0%, 0%);
+  /* box-shadow: inset 0 0 3px 2px var(--board-background-color), */
+  border: 3px solid var(--ball-default-border-color);
+  box-shadow: 10px 10px 15px 5px rgba(0, 0, 0, 0.1);
 }

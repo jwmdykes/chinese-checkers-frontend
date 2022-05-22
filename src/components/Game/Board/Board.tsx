@@ -9,14 +9,15 @@ interface RowProps {
   clickCallback(e: React.MouseEvent): void;
 }
 
-interface RowState {}
-
-class Row extends React.Component<RowProps, RowState> {
+class Row extends React.Component<RowProps> {
   render() {
     return (
       <div className='Row'>
         {this.props.row.map((value: Number, index: Number) => {
           const color = '' + this.props.colors[+value];
+          const selected = this.props.selected[+index]
+            ? '2px solid var(--ball-border-color)'
+            : 'none';
           return (
             <span
               key={+index}
@@ -24,9 +25,7 @@ class Row extends React.Component<RowProps, RowState> {
               id={JSON.stringify({ x: index, y: this.props.rowNumber })}
               style={{
                 background: color,
-                border: this.props.selected[+index]
-                  ? '2px solid var(--ball-border-color)'
-                  : 'none',
+                border: selected,
               }}
               onClick={this.props.clickCallback}
             ></span>
@@ -44,12 +43,8 @@ interface BoardProps {
   onClick(e: React.MouseEvent): void;
 }
 
-interface BoardState {}
-
-class Board extends React.Component<BoardProps, BoardState> {
+class Board extends React.Component<BoardProps> {
   render() {
-    // console.log(this.state.rows);
-    console.log(this.props.selected);
     return (
       <div className='Board'>
         {this.props.rows.map((value: Array<Number>, index: Number) => {

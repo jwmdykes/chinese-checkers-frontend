@@ -68,12 +68,13 @@ class Board extends React.Component<BoardProps, BoardState> {
   };
 
   render() {
-    console.log(this.state.rows);
+    // console.log(this.state.rows);
     return (
       <div className='Board'>
         {this.state.rows.map((value: Array<Number>, index: Number) => {
           return (
             <Row
+              key={+index}
               row={value}
               rowNumber={index}
               colors={this.colors}

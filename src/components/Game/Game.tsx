@@ -14,7 +14,7 @@ interface GameProps {
 interface GameState {
   rows: Array<Array<Number>>;
   selected: Array<Array<boolean>>;
-  thisPlayerID: number; // which player are we? Can be modified so that we can play the game alone
+  thisPlayerID: number; // which player are we? Can be modified so that we move each player's pieces.
   turn: number;
 }
 

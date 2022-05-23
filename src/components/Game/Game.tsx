@@ -46,6 +46,51 @@ class Game extends React.Component<GameProps, GameState> {
     };
   }
 
+  changeTurn = () => {
+    // change whose turn it is. If `isSinglePlayer` prop is set,
+    // retain control of the pieces even after the player changes.
+
+    let newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
+    let newThisPlayerID = this.props.isSinglePlayer
+      ? newTurn
+      : this.state.thisPlayerID;
+
+    this.setState({
+      turn: newTurn,
+      thisPlayerID: newThisPlayerID,
+    });
+  };
+
+  tryMovePiece = (
+    source: { x: number; y: number },
+    dest: { x: number; y: number }
+  ): void => {
+    // try to move the piece `source` to `dest`
+    if (!this.moveableSquares) {
+      return;
+    }
+
+    for (let square of this.moveableSquares) {
+      if (square[0] === dest.x && square[1] === dest.y) {
+        this.moveableSquares = null;
+        let newSelected = JSON.parse(
+          JSON.stringify(gameSettings.StartingSelected)
+        );
+        let newRows = JSON.parse(JSON.stringify(this.state.rows));
+        newRows[source.y][source.x] = 0;
+        newRows[dest.y][dest.x] = this.state.thisPlayerID;
+
+        this.changeTurn();
+
+        this.setState({
+          rows: newRows,
+          selected: newSelected,
+        });
+        break;
+      }
+    }
+  };
+
   pieceOnHover = (e: React.MouseEvent) => {
     console.log('HOVER');
     // console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
@@ -85,18 +130,15 @@ class Game extends React.Component<GameProps, GameState> {
 
     const target = e.nativeEvent.target as HTMLSpanElement;
     const clicked = JSON.parse(target.id);
-    let newLastClicked = JSON.parse(JSON.stringify(this.state.lastClicked));
-    let newRows = JSON.parse(JSON.stringify(this.state.rows));
-    let newSelected = JSON.parse(JSON.stringify(this.state.selected));
-    let newTurn = this.state.turn;
-    let newThisPlayerID = this.state.thisPlayerID;
 
     // if this is a click on the current player's piece select that piece,
     if (this.state.rows[clicked.y][clicked.x] === this.state.thisPlayerID) {
-      newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
+      let newSelected = JSON.parse(
+        JSON.stringify(gameSettings.StartingSelected)
+      );
 
       newSelected[clicked.y][clicked.x] = true;
-      newLastClicked = clicked;
+      let newLastClicked = clicked;
       this.moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
         clicked.x,
         clicked.y,
@@ -104,50 +146,21 @@ class Game extends React.Component<GameProps, GameState> {
       for (let square of this.moveableSquares) {
         newSelected[square[1]][square[0]] = true;
       }
+      this.setState({
+        selected: newSelected,
+        lastClicked: newLastClicked,
+      });
     }
     // Otherwise, move the piece to the new square if it is a legal move
     else if (this.moveableSquares && this.state.lastClicked) {
-      console.log('GO!');
-      for (let square of this.moveableSquares) {
-        if (square[0] === clicked.x && square[1] === clicked.y) {
-          this.moveableSquares = null;
-          newSelected = JSON.parse(
-            JSON.stringify(gameSettings.StartingSelected)
-          );
-          newRows[this.state.lastClicked.y][this.state.lastClicked.x] = 0;
-          newRows[clicked.y][clicked.x] = this.state.thisPlayerID;
-
-          // change whose turn it is. If `isSinglePlayer` prop is set,
-          // retain control of the pieces even after the player changes.
-          newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
-          newThisPlayerID = this.props.isSinglePlayer
-            ? newTurn
-            : this.state.thisPlayerID;
-          break;
-        }
-      }
+      this.tryMovePiece(this.state.lastClicked, clicked);
     }
-
-    this.setState({
-      turn: newTurn,
-      thisPlayerID: newThisPlayerID,
-      rows: newRows,
-      selected: newSelected,
-      lastClicked: newLastClicked,
-    });
-    return;
   };
 
   pieceOnMouseUp = (e: React.MouseEvent) => {
     console.log('MOUSE UP');
     const target = e.nativeEvent.target as HTMLSpanElement;
     const clicked = JSON.parse(target.id);
-    let newLastClicked = JSON.parse(JSON.stringify(this.state.lastClicked));
-    // deep copy rows
-    let newRows = JSON.parse(JSON.stringify(this.state.rows));
-    let newSelected = JSON.parse(JSON.stringify(this.state.selected));
-    let newTurn = this.state.turn;
-    let newThisPlayerID = this.state.thisPlayerID;
 
     // deselect piece if it has already be upclicked on once
     // for example, clicking (up and down) on a piece will select it
@@ -157,46 +170,21 @@ class Game extends React.Component<GameProps, GameState> {
       this.lastUpClicked.x === clicked.x &&
       this.lastUpClicked.y === clicked.y
     ) {
-      newLastClicked = null;
-      newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
       this.moveableSquares = null;
-      newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
       this.lastUpClicked = null;
+      this.setState({
+        selected: JSON.parse(JSON.stringify(gameSettings.StartingSelected)),
+        lastClicked: null,
+      });
     } else {
       this.lastUpClicked = clicked;
     }
 
     // Move the piece if possible
     const hovered = this.state.hovered;
-    if (this.moveableSquares && hovered) {
-      for (let square of this.moveableSquares) {
-        if (square[0] === hovered.x && square[1] === hovered.y) {
-          this.moveableSquares = null;
-          newSelected = JSON.parse(
-            JSON.stringify(gameSettings.StartingSelected)
-          );
-
-          newRows[this.state.lastClicked!.y][this.state.lastClicked!.x] = 0;
-          newRows[clicked.y][clicked.x] = this.state.thisPlayerID;
-
-          // change whose turn it is. If `isSinglePlayer` prop is set,
-          // retain control of the pieces even after the player changes.
-          newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
-          newThisPlayerID = this.props.isSinglePlayer
-            ? newTurn
-            : this.state.thisPlayerID;
-          break;
-        }
-      }
+    if (this.moveableSquares && hovered && this.state.lastClicked) {
+      this.tryMovePiece(this.state.lastClicked, hovered);
     }
-
-    this.setState({
-      turn: newTurn,
-      thisPlayerID: newThisPlayerID,
-      rows: newRows,
-      selected: newSelected,
-      lastClicked: newLastClicked,
-    });
   };
 
   render() {

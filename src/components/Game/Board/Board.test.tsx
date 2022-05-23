@@ -21,6 +21,7 @@ describe('<Board />', () => {
         selected={selected}
         colors={colors}
         pieceOnClick={(e) => {}}
+        turn={1}
       />
     );
   });

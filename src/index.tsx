@@ -15,7 +15,14 @@ root.render(
     {/* <Grid></Grid> */}
     {/* <SidebarLayout></SidebarLayout> */}
     <Game
-      players={[Settings.Player1, Settings.Player2]}
+      players={[
+        Settings.Player1,
+        Settings.Player2,
+        Settings.Player3,
+        Settings.Player4,
+        Settings.Player5,
+        Settings.Player6,
+      ]}
       availColors={Settings.colors}
       isSinglePlayer={true}
     ></Game>

@@ -21,3 +21,19 @@
   display: flex;
   justify-content: center;
 }
+
+.TurnIndicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: x-large;
+  font-weight: bold;
+  color: rgb(30, 30, 34);
+  text-shadow: 2px 1px 5px #fdfcfc;
+  border: 2px solid rgb(36, 35, 35);
+  position: absolute;
+  top: 4%;
+  right: 22%;
+  height: 100px;
+  padding: 20px;
+}

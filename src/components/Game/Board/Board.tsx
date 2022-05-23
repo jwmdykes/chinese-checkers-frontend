@@ -1,4 +1,5 @@
 import React, { Ref } from 'react';
+import { colors } from '../gameSettings';
 import StaticPiece from '../Piece/StaticPiece';
 import './Board.css';
 
@@ -40,6 +41,7 @@ interface BoardProps {
   selected: Array<Array<boolean>>;
   colors: Array<String>;
   pieceOnClick(e: React.MouseEvent): void;
+  turn: number;
 }
 
 class Board extends React.Component<BoardProps> {
@@ -58,6 +60,15 @@ class Board extends React.Component<BoardProps> {
             ></Row>
           );
         })}
+        <div
+          className='TurnIndicator'
+          style={{
+            background:
+              '' + this.props.colors[this.props.turn] || 'hsl(6, 51%, 32%)',
+          }}
+        >
+          It is {this.props.colors[this.props.turn] || 'Nobody'}'s turn to move.
+        </div>
       </div>
     );
   }

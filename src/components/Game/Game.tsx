@@ -128,6 +128,7 @@ class Game extends React.Component<GameProps, GameState> {
           selected={this.state.selected}
           colors={this.colors}
           pieceOnClick={this.pieceOnClick}
+          turn={this.state.thisPlayerID}
         ></Board>
       </div>
     );

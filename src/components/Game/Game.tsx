@@ -33,8 +33,10 @@ class Game extends React.Component<GameProps, GameState> {
     this.state = {
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
-      rows: gameSettings.StartingRows[this.props.players.length],
-      selected: gameSettings.StartingSelected,
+      rows: JSON.parse(
+        JSON.stringify(gameSettings.StartingRows[this.props.players.length])
+      ),
+      selected: JSON.parse(JSON.stringify(gameSettings.StartingSelected)),
       lastClicked: null,
     };
   }
@@ -49,23 +51,33 @@ class Game extends React.Component<GameProps, GameState> {
     const clicked = JSON.parse(target.id);
     let newLastClicked = JSON.parse(JSON.stringify(this.state.lastClicked));
     // deep copy rows
-    let newRows = this.state.rows.map((arr) => {
-      return arr.slice();
-    });
-    let newSelected = this.state.selected.map((arr) => {
-      return arr.slice();
-    });
+    let newRows = JSON.parse(JSON.stringify(this.state.rows));
+    let newSelected = JSON.parse(JSON.stringify(this.state.selected));
     let newTurn = this.state.turn;
     let newThisPlayerID = this.state.thisPlayerID;
 
     // if this is the first click, and it's a click on a valid piece, select that piece
     if (this.state.rows[clicked.y][clicked.x] === this.state.thisPlayerID) {
-      if (this.state.lastClicked !== null) {
-        newSelected[this.state.lastClicked.y][this.state.lastClicked.x] = false;
+      newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
+
+      if (
+        this.state.lastClicked &&
+        this.state.lastClicked.x === clicked.x &&
+        this.state.lastClicked.y === clicked.y
+      ) {
+        newLastClicked = null;
+      } else {
+        newSelected[clicked.y][clicked.x] = true;
+        newLastClicked = clicked;
+        // Todo: highlight valid moves
+        const moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
+          clicked.x,
+          clicked.y,
+        ]);
+        for (let square of moveableSquares) {
+          newSelected[square[1]][square[0]] = true;
+        }
       }
-      newSelected[clicked.y][clicked.x] = true;
-      newLastClicked = clicked;
-      // Todo: highlight valid moves
     }
 
     // newRows[clicked.y][clicked.x] = newRows[clicked.y][clicked.x] === 1 ? 0 : 1;

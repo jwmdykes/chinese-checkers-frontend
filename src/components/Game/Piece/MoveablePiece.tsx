@@ -108,6 +108,7 @@ export default class MoveablePiece extends React.Component<
             top: this.state.top,
             left: this.state.left,
             position: this.state.position,
+            pointerEvents: this.state.position === 'absolute' ? 'none' : 'auto',
           }}
           onMouseDown={this.onMouseDown}
           onMouseUp={this.props.mouseUpCallback}

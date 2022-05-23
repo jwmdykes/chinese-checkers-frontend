@@ -149,6 +149,9 @@ class Game extends React.Component<GameProps, GameState> {
     let newTurn = this.state.turn;
     let newThisPlayerID = this.state.thisPlayerID;
 
+    // deselect piece if it has already be upclicked on once
+    // for example, clicking (up and down) on a piece will select it
+    // but the second time it will be deselected.
     if (
       this.lastUpClicked &&
       this.lastUpClicked.x === clicked.x &&
@@ -158,13 +161,41 @@ class Game extends React.Component<GameProps, GameState> {
       newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
       this.moveableSquares = null;
       newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
+      this.lastUpClicked = null;
     } else {
       this.lastUpClicked = clicked;
     }
 
+    // Move the piece if possible
+    const hovered = this.state.hovered;
+    if (this.moveableSquares && hovered) {
+      for (let square of this.moveableSquares) {
+        if (square[0] === hovered.x && square[1] === hovered.y) {
+          this.moveableSquares = null;
+          newSelected = JSON.parse(
+            JSON.stringify(gameSettings.StartingSelected)
+          );
+
+          newRows[this.state.lastClicked!.y][this.state.lastClicked!.x] = 0;
+          newRows[clicked.y][clicked.x] = this.state.thisPlayerID;
+
+          // change whose turn it is. If `isSinglePlayer` prop is set,
+          // retain control of the pieces even after the player changes.
+          newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
+          newThisPlayerID = this.props.isSinglePlayer
+            ? newTurn
+            : this.state.thisPlayerID;
+          break;
+        }
+      }
+    }
+
     this.setState({
-      lastClicked: newLastClicked,
+      turn: newTurn,
+      thisPlayerID: newThisPlayerID,
+      rows: newRows,
       selected: newSelected,
+      lastClicked: newLastClicked,
     });
   };
 

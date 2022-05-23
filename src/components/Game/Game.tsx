@@ -82,8 +82,10 @@ class Game extends React.Component<GameProps, GameState> {
     }
     // Otherwise, move the piece to the new square if it is a legal move
     else if (this.moveableSquares && this.state.lastClicked) {
+      console.log('GO!');
       for (let square of this.moveableSquares) {
         if (square[0] === clicked.x && square[1] === clicked.y) {
+          this.moveableSquares = null;
           newSelected = JSON.parse(
             JSON.stringify(gameSettings.StartingSelected)
           );

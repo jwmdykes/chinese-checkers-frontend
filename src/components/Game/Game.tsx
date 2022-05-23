@@ -8,7 +8,7 @@ import * as gameSettings from './gameSettings';
 
 interface GameProps {
   players: gameLogic.Player[];
-  availColors: { [key: string]: string };
+  availColors: { [key: string]: gameSettings.Color };
   isSinglePlayer: boolean; // If true, the user can play moves for all players
 }
 
@@ -21,14 +21,15 @@ interface GameState {
 }
 
 class Game extends React.Component<GameProps, GameState> {
-  colors!: Array<String>;
+  colors!: Array<gameSettings.Color>;
   moveableSquares!: null | [number, number][];
   constructor(props: GameProps) {
     super(props);
 
     this.colors = Array(10).fill(this.props.availColors['empty']);
     for (let i = 0; i < this.props.players.length; i++) {
-      this.colors[this.props.players[i].id] = this.props.players[i].color;
+      this.colors[this.props.players[i].id] =
+        gameSettings.colors[this.props.players[i].color];
     }
 
     this.state = {

@@ -30,15 +30,40 @@ export const Player6: gameLogic.Player = {
   color: 'yellow',
 };
 
-export const colors: gameLogic.ColorMap = {
-  empty: 'hsl(22, 75%, 9%)',
-  blue: 'hsl(251, 75%, 49%)',
-  red: 'hsl(0, 90%, 48%)',
-  green: 'hsl(127, 88%, 46%)',
-  pink: 'hsl(316, 97%, 65%)',
-  purple: 'hsl(279, 100%, 42%)',
-  yellow: 'hsl(60, 91%, 50%)',
-  teal: 'hsl(177, 91%, 50%)',
+export interface Color {
+  type: string;
+  hue: number;
+  saturation: number;
+  brightness: number;
+}
+
+export type ColorMap = { [key: string]: Color };
+
+export const colors: ColorMap = {
+  empty: { type: 'hsl', hue: 22, saturation: 75, brightness: 9 },
+  blue: { type: 'hsl', hue: 251, saturation: 75, brightness: 49 },
+  red: { type: 'hsl', hue: 0, saturation: 90, brightness: 48 },
+  green: { type: 'hsl', hue: 127, saturation: 88, brightness: 46 },
+  pink: { type: 'hsl', hue: 316, saturation: 97, brightness: 65 },
+  purple: { type: 'hsl', hue: 279, saturation: 100, brightness: 42 },
+  yellow: { type: 'hsl', hue: 60, saturation: 91, brightness: 50 },
+  teal: { type: 'hsl', hue: 177, saturation: 91, brightness: 50 },
+};
+
+export const colorString = (color: Color): string => {
+  if (color.type === 'hsl') {
+    return (
+      'hsl(' +
+      color.hue +
+      ',' +
+      color.saturation +
+      '%,' +
+      color.brightness +
+      '%)'
+    );
+  } else {
+    throw 'colors other than hsl not yet supported';
+  }
 };
 
 export const StartingSelected: Array<Array<boolean>> = [

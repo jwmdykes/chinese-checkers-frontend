@@ -8,8 +8,6 @@ export interface Square {
   selected: boolean;
 }
 
-export type ColorMap = { [key: string]: string };
-
 export const fillBoard0s = (
   rows: Array<Array<Number>>,
   rowLengths: Array<Number>

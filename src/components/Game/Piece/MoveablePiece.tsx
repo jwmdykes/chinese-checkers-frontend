@@ -5,7 +5,10 @@ import * as gameSettings from '../gameSettings';
 interface PieceProps {
   id: string;
   style: { color: string; border: string };
-  clickCallback(e: React.MouseEvent): void;
+  mouseDownCallback(e: React.MouseEvent): void;
+  mouseUpCallback(e: React.MouseEvent): void;
+  mouseEnterCallback(e: React.MouseEvent): void;
+  mouseLeaveCallback(e: React.MouseEvent): void;
   shouldMove: boolean;
 }
 
@@ -45,7 +48,7 @@ export default class MoveablePiece extends React.Component<
 
   onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    this.props.clickCallback(e);
+    this.props.mouseDownCallback(e);
 
     if (!this.props.shouldMove) {
       this.setState({
@@ -57,7 +60,7 @@ export default class MoveablePiece extends React.Component<
     }
 
     const rect = this.myRef.current.getBoundingClientRect();
-    console.log('down!');
+    // console.log('down!');
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('mouseup', this.onMouseUp);
     this.startOffsetX = e.clientX - rect.left;
@@ -71,7 +74,7 @@ export default class MoveablePiece extends React.Component<
 
   onMouseUp = (e: MouseEvent) => {
     e.preventDefault();
-    console.log('up!');
+    // console.log('up!');
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseup', this.onMouseUp);
     this.setState({
@@ -81,7 +84,7 @@ export default class MoveablePiece extends React.Component<
 
   onMouseMove = (e: MouseEvent) => {
     e.preventDefault();
-    console.log('moving!');
+    // console.log('moving!');
     const x = e.clientX;
     const y = e.clientY;
     const left = x - this.startOffsetX;
@@ -107,6 +110,9 @@ export default class MoveablePiece extends React.Component<
             position: this.state.position,
           }}
           onMouseDown={this.onMouseDown}
+          onMouseUp={this.props.mouseUpCallback}
+          onMouseOver={this.props.mouseEnterCallback}
+          onMouseLeave={this.props.mouseLeaveCallback}
         ></div>
         {this.state.position === 'static' || (
           <div

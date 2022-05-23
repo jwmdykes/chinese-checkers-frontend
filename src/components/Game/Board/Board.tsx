@@ -10,7 +10,10 @@ interface RowProps {
   selected: Array<boolean>;
   rowNumber: Number;
   colors: Array<gameSettings.Color>;
-  clickCallback(e: React.MouseEvent): void;
+  mouseDownCallback(e: React.MouseEvent): void;
+  mouseUpCallback(e: React.MouseEvent): void;
+  mouseEnterCallback(e: React.MouseEvent): void;
+  mouseLeaveCallback(e: React.MouseEvent): void;
   lastClicked: { x: number; y: number } | null;
   turn: number;
 }
@@ -32,7 +35,10 @@ class Row extends React.Component<RowProps> {
               key={+index}
               id={id}
               style={style}
-              clickCallback={this.props.clickCallback}
+              mouseDownCallback={this.props.mouseDownCallback}
+              mouseUpCallback={this.props.mouseUpCallback}
+              mouseEnterCallback={this.props.mouseEnterCallback}
+              mouseLeaveCallback={this.props.mouseLeaveCallback}
               shouldMove={shouldMove}
             ></MoveablePiece>
           );
@@ -42,16 +48,14 @@ class Row extends React.Component<RowProps> {
   }
 }
 
-const lightenColor = (color: gameSettings.Color): string => {
-  return 'white';
-};
-
 interface BoardProps {
   rows: Array<Array<Number>>;
   selected: Array<Array<boolean>>;
   colors: Array<gameSettings.Color>;
-  pieceOnClick(e: React.MouseEvent): void;
+  pieceOnMouseDown(e: React.MouseEvent): void;
+  pieceOnMouseUp(e: React.MouseEvent): void;
   pieceOnHover(e: React.MouseEvent): void;
+  pieceOnLeave(e: React.MouseEvent): void;
   turn: number;
   lastClicked: { x: number; y: number } | null;
 }
@@ -76,7 +80,10 @@ class Board extends React.Component<BoardProps> {
               selected={this.props.selected[+index]}
               rowNumber={index}
               colors={this.props.colors}
-              clickCallback={this.props.pieceOnClick}
+              mouseDownCallback={this.props.pieceOnMouseDown}
+              mouseUpCallback={this.props.pieceOnMouseUp}
+              mouseEnterCallback={this.props.pieceOnHover}
+              mouseLeaveCallback={this.props.pieceOnLeave}
               lastClicked={this.props.lastClicked}
               turn={this.props.turn}
             ></Row>

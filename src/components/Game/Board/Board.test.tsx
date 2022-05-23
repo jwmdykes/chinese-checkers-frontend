@@ -23,8 +23,10 @@ describe('<Board />', () => {
         rows={rows}
         selected={selected}
         colors={colors}
-        pieceOnClick={(e) => {}}
+        pieceOnMouseDown={(e) => {}}
+        pieceOnMouseUp={(e) => {}}
         pieceOnHover={(e) => {}}
+        pieceOnLeave={(e) => {}}
         turn={1}
         lastClicked={lastClicked}
       />

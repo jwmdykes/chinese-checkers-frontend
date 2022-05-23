@@ -41,6 +41,7 @@ export type ColorMap = { [key: string]: Color };
 
 export const colors: ColorMap = {
   empty: { type: 'hsl', hue: 22, saturation: 75, brightness: 9 },
+  hover: { type: 'hsl', hue: 22, saturation: 75, brightness: 40 },
   blue: { type: 'hsl', hue: 251, saturation: 75, brightness: 49 },
   red: { type: 'hsl', hue: 0, saturation: 90, brightness: 48 },
   green: { type: 'hsl', hue: 127, saturation: 88, brightness: 46 },

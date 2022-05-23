@@ -18,11 +18,13 @@ interface GameState {
   lastClicked: { x: number; y: number } | null;
   thisPlayerID: number; // which player are we? Can be modified so that we move each player's pieces.
   turn: number;
+  hovered: { x: number; y: number } | null;
 }
 
 class Game extends React.Component<GameProps, GameState> {
   colors!: Array<gameSettings.Color>;
   moveableSquares!: null | [number, number][];
+  lastUpClicked!: { x: number; y: number } | null;
   constructor(props: GameProps) {
     super(props);
 
@@ -40,15 +42,42 @@ class Game extends React.Component<GameProps, GameState> {
       ),
       selected: JSON.parse(JSON.stringify(gameSettings.StartingSelected)),
       lastClicked: null,
+      hovered: null,
     };
   }
 
   pieceOnHover = (e: React.MouseEvent) => {
-    console.log('HOVER!');
-    return;
+    console.log('HOVER');
+    // console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
+
+    const target = e.nativeEvent.target as HTMLDivElement;
+    const clicked = JSON.parse(target.id);
+    let newRows = JSON.parse(JSON.stringify(this.state.rows));
+    // newRows[clicked.y][clicked.x] = 2;
+    this.setState({
+      rows: newRows,
+      hovered: clicked,
+    });
   };
 
-  pieceOnClick = (e: React.MouseEvent) => {
+  pieceOnLeave = (e: React.MouseEvent) => {
+    // console.log('STOP HOVER!', e.nativeEvent.target as HTMLDivElement);
+
+    const target = e.nativeEvent.target as HTMLDivElement;
+    const clicked = JSON.parse(target.id);
+    let newRows = JSON.parse(JSON.stringify(this.state.rows));
+    // newRows[clicked.y][clicked.x] = 0;
+
+    this.setState({
+      rows: newRows,
+      hovered: null,
+    });
+  };
+
+  pieceOnMouseDown = (e: React.MouseEvent) => {
+    console.log('MOUSE DOWN');
+    e.preventDefault();
+
     // if it's not this player's turn, don't let them move
     if (this.state.turn !== this.state.thisPlayerID) {
       return;
@@ -57,33 +86,23 @@ class Game extends React.Component<GameProps, GameState> {
     const target = e.nativeEvent.target as HTMLSpanElement;
     const clicked = JSON.parse(target.id);
     let newLastClicked = JSON.parse(JSON.stringify(this.state.lastClicked));
-    // deep copy rows
     let newRows = JSON.parse(JSON.stringify(this.state.rows));
     let newSelected = JSON.parse(JSON.stringify(this.state.selected));
     let newTurn = this.state.turn;
     let newThisPlayerID = this.state.thisPlayerID;
 
     // if this is a click on the current player's piece select that piece,
-    // unless it is already selected in which case deselect it
     if (this.state.rows[clicked.y][clicked.x] === this.state.thisPlayerID) {
       newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
 
-      if (
-        this.state.lastClicked &&
-        this.state.lastClicked.x === clicked.x &&
-        this.state.lastClicked.y === clicked.y
-      ) {
-        newLastClicked = null;
-      } else {
-        newSelected[clicked.y][clicked.x] = true;
-        newLastClicked = clicked;
-        this.moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
-          clicked.x,
-          clicked.y,
-        ]);
-        for (let square of this.moveableSquares) {
-          newSelected[square[1]][square[0]] = true;
-        }
+      newSelected[clicked.y][clicked.x] = true;
+      newLastClicked = clicked;
+      this.moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
+        clicked.x,
+        clicked.y,
+      ]);
+      for (let square of this.moveableSquares) {
+        newSelected[square[1]][square[0]] = true;
       }
     }
     // Otherwise, move the piece to the new square if it is a legal move
@@ -119,6 +138,36 @@ class Game extends React.Component<GameProps, GameState> {
     return;
   };
 
+  pieceOnMouseUp = (e: React.MouseEvent) => {
+    console.log('MOUSE UP');
+    const target = e.nativeEvent.target as HTMLSpanElement;
+    const clicked = JSON.parse(target.id);
+    let newLastClicked = JSON.parse(JSON.stringify(this.state.lastClicked));
+    // deep copy rows
+    let newRows = JSON.parse(JSON.stringify(this.state.rows));
+    let newSelected = JSON.parse(JSON.stringify(this.state.selected));
+    let newTurn = this.state.turn;
+    let newThisPlayerID = this.state.thisPlayerID;
+
+    if (
+      this.lastUpClicked &&
+      this.lastUpClicked.x === clicked.x &&
+      this.lastUpClicked.y === clicked.y
+    ) {
+      newLastClicked = null;
+      newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
+      this.moveableSquares = null;
+      newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
+    } else {
+      this.lastUpClicked = clicked;
+    }
+
+    this.setState({
+      lastClicked: newLastClicked,
+      selected: newSelected,
+    });
+  };
+
   render() {
     // console.log(this.state.rows);
     return (
@@ -127,8 +176,10 @@ class Game extends React.Component<GameProps, GameState> {
           rows={this.state.rows}
           selected={this.state.selected}
           colors={this.colors}
-          pieceOnClick={this.pieceOnClick}
+          pieceOnMouseDown={this.pieceOnMouseDown}
+          pieceOnMouseUp={this.pieceOnMouseUp}
           pieceOnHover={this.pieceOnHover}
+          pieceOnLeave={this.pieceOnLeave}
           turn={this.state.thisPlayerID}
           lastClicked={this.state.lastClicked}
         ></Board>

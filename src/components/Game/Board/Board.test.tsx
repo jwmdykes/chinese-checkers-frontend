@@ -20,7 +20,7 @@ describe('<Board />', () => {
         rows={rows}
         selected={selected}
         colors={colors}
-        onClick={(e) => {}}
+        pieceOnClick={(e) => {}}
       />
     );
   });

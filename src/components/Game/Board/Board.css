@@ -22,11 +22,15 @@
   justify-content: center;
 }
 
-.BallHole {
+.PlaceHolder {
   width: 35px;
   height: 35px;
   margin: 8px 16px;
+}
+
+.BallHole {
+  height: 35px;
+  width: 35px;
   border-radius: 50%;
-  border: 3px solid var(--ball-default-border-color);
   box-shadow: 10px 10px 15px 5px rgba(0, 0, 0, 0.1);
 }

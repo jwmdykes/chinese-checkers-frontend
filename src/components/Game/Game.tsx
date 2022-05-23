@@ -22,6 +22,7 @@ interface GameState {
 
 class Game extends React.Component<GameProps, GameState> {
   colors!: Array<String>;
+  moveableSquares!: null | [number, number][];
   constructor(props: GameProps) {
     super(props);
 
@@ -56,7 +57,8 @@ class Game extends React.Component<GameProps, GameState> {
     let newTurn = this.state.turn;
     let newThisPlayerID = this.state.thisPlayerID;
 
-    // if this is the first click, and it's a click on a valid piece, select that piece
+    // if this is a click on the current player's piece select that piece,
+    // unless it is already selected in which case deselect it
     if (this.state.rows[clicked.y][clicked.x] === this.state.thisPlayerID) {
       newSelected = JSON.parse(JSON.stringify(gameSettings.StartingSelected));
 
@@ -69,22 +71,35 @@ class Game extends React.Component<GameProps, GameState> {
       } else {
         newSelected[clicked.y][clicked.x] = true;
         newLastClicked = clicked;
-        // Todo: highlight valid moves
-        const moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
+        this.moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
           clicked.x,
           clicked.y,
         ]);
-        for (let square of moveableSquares) {
+        for (let square of this.moveableSquares) {
           newSelected[square[1]][square[0]] = true;
         }
       }
     }
+    // Otherwise, move the piece to the new square if it is a legal move
+    else if (this.moveableSquares && this.state.lastClicked) {
+      for (let square of this.moveableSquares) {
+        if (square[0] === clicked.x && square[1] === clicked.y) {
+          newSelected = JSON.parse(
+            JSON.stringify(gameSettings.StartingSelected)
+          );
+          newRows[this.state.lastClicked.y][this.state.lastClicked.x] = 0;
+          newRows[clicked.y][clicked.x] = this.state.thisPlayerID;
 
-    // newRows[clicked.y][clicked.x] = newRows[clicked.y][clicked.x] === 1 ? 0 : 1;
-    // gameLogic.changeTurn(this.props.players, this.state.turn);
-    // newThisPlayerID = this.props.isSinglePlayer
-    //   ? newTurn
-    //   : this.state.thisPlayerID;
+          // change whose turn it is. If `isSinglePlayer` prop is set,
+          // retain control of the pieces even after the player changes.
+          newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
+          newThisPlayerID = this.props.isSinglePlayer
+            ? newTurn
+            : this.state.thisPlayerID;
+          break;
+        }
+      }
+    }
 
     this.setState({
       turn: newTurn,

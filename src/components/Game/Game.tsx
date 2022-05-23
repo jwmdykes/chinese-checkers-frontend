@@ -92,7 +92,7 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnHover = (e: React.MouseEvent) => {
-    console.log('HOVER');
+    // console.log('HOVER');
     // console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
 
     const target = e.nativeEvent.target as HTMLDivElement;
@@ -120,7 +120,7 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnMouseDown = (e: React.MouseEvent) => {
-    console.log('MOUSE DOWN');
+    // console.log('MOUSE DOWN');
     e.preventDefault();
 
     // if it's not this player's turn, don't let them move
@@ -158,7 +158,7 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnMouseUp = (e: React.MouseEvent) => {
-    console.log('MOUSE UP');
+    // console.log('MOUSE UP');
     const target = e.nativeEvent.target as HTMLSpanElement;
     const clicked = JSON.parse(target.id);
 

@@ -3,6 +3,7 @@ import { colors } from '../gameSettings';
 import StaticPiece from '../Piece/StaticPiece';
 import * as gameSettings from '../gameSettings';
 import './Board.css';
+import MoveablePiece from '../Piece/MoveablePiece';
 
 interface RowProps {
   row: Array<Number>;
@@ -10,6 +11,8 @@ interface RowProps {
   rowNumber: Number;
   colors: Array<gameSettings.Color>;
   clickCallback(e: React.MouseEvent): void;
+  lastClicked: { x: number; y: number } | null;
+  turn: number;
 }
 
 class Row extends React.Component<RowProps> {
@@ -23,13 +26,15 @@ class Row extends React.Component<RowProps> {
             ? '2px solid var(--ball-border-color)'
             : '2px solid var(--ball-default-border-color)';
           const style = { color: color, border: selected };
+          const shouldMove = value === this.props.turn;
           return (
-            <StaticPiece
+            <MoveablePiece
               key={+index}
               id={id}
               style={style}
               clickCallback={this.props.clickCallback}
-            ></StaticPiece>
+              shouldMove={shouldMove}
+            ></MoveablePiece>
           );
         })}
       </div>
@@ -46,7 +51,9 @@ interface BoardProps {
   selected: Array<Array<boolean>>;
   colors: Array<gameSettings.Color>;
   pieceOnClick(e: React.MouseEvent): void;
+  pieceOnHover(e: React.MouseEvent): void;
   turn: number;
+  lastClicked: { x: number; y: number } | null;
 }
 
 class Board extends React.Component<BoardProps> {
@@ -56,7 +63,7 @@ class Board extends React.Component<BoardProps> {
       type: color.type,
       hue: color.hue,
       saturation: color.saturation,
-      brightness: color.brightness + 20,
+      brightness: color.brightness + 15,
     };
     const backgroundColorString = gameSettings.colorString(backgroundColor);
     return (
@@ -70,6 +77,8 @@ class Board extends React.Component<BoardProps> {
               rowNumber={index}
               colors={this.props.colors}
               clickCallback={this.props.pieceOnClick}
+              lastClicked={this.props.lastClicked}
+              turn={this.props.turn}
             ></Row>
           );
         })}

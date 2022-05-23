@@ -1,15 +1,18 @@
 import React, { Ref } from 'react';
 import './Piece.css';
+import * as gameSettings from '../gameSettings';
 
 interface PieceProps {
   id: string;
   style: { color: string; border: string };
   clickCallback(e: React.MouseEvent): void;
+  shouldMove: boolean;
 }
 
 interface PieceState {
   top: number;
   left: number;
+  position: 'static' | 'absolute';
 }
 
 export default class MoveablePiece extends React.Component<
@@ -28,6 +31,7 @@ export default class MoveablePiece extends React.Component<
     this.state = {
       top: 0,
       left: 0,
+      position: 'static',
     };
   }
 
@@ -43,6 +47,15 @@ export default class MoveablePiece extends React.Component<
     e.preventDefault();
     this.props.clickCallback(e);
 
+    if (!this.props.shouldMove) {
+      this.setState({
+        top: 0,
+        left: 0,
+        position: 'static',
+      });
+      return;
+    }
+
     const rect = this.myRef.current.getBoundingClientRect();
     console.log('down!');
     window.addEventListener('mousemove', this.onMouseMove);
@@ -52,6 +65,7 @@ export default class MoveablePiece extends React.Component<
     this.setState({
       top: rect.top,
       left: rect.left,
+      position: 'absolute',
     });
   };
 
@@ -60,6 +74,9 @@ export default class MoveablePiece extends React.Component<
     console.log('up!');
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseup', this.onMouseUp);
+    this.setState({
+      position: 'static',
+    });
   };
 
   onMouseMove = (e: MouseEvent) => {
@@ -77,18 +94,33 @@ export default class MoveablePiece extends React.Component<
 
   render() {
     return (
-      <div
-        ref={this.myRef}
-        className='MoveablePiece'
-        id={this.props.id}
-        style={{
-          background: this.props.style.color,
-          border: this.props.style.border,
-          top: this.state.top,
-          left: this.state.left,
-        }}
-        onMouseDown={this.onMouseDown}
-      ></div>
+      <div className='PlaceHolder'>
+        <div
+          ref={this.myRef}
+          className='Piece'
+          id={this.props.id}
+          style={{
+            background: this.props.style.color,
+            border: this.props.style.border,
+            top: this.state.top,
+            left: this.state.left,
+            position: this.state.position,
+          }}
+          onMouseDown={this.onMouseDown}
+        ></div>
+        {this.state.position === 'static' || (
+          <div
+            className='Piece'
+            id={'ghost:' + this.props.id}
+            style={{
+              background: gameSettings.colorString(gameSettings.colors.empty),
+              border: this.props.style.border,
+              position: 'static',
+              cursor: this.props.shouldMove ? 'pointer' : 'default',
+            }}
+          ></div>
+        )}
+      </div>
     );
   }
 }

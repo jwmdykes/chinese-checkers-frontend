@@ -32,7 +32,7 @@ export default class Piece extends React.Component<PieceProps> {
       <div className='PlaceHolder'>
         <div
           ref={this.myRef}
-          className='StaticPiece'
+          className='Piece'
           id={this.props.id}
           style={{
             background: this.props.style.color,

@@ -43,6 +43,11 @@ class Game extends React.Component<GameProps, GameState> {
     };
   }
 
+  pieceOnHover = (e: React.MouseEvent) => {
+    console.log('HOVER!');
+    return;
+  };
+
   pieceOnClick = (e: React.MouseEvent) => {
     // if it's not this player's turn, don't let them move
     if (this.state.turn !== this.state.thisPlayerID) {
@@ -118,20 +123,14 @@ class Game extends React.Component<GameProps, GameState> {
     // console.log(this.state.rows);
     return (
       <div className='Game'>
-        <MoveablePiece
-          id={'test'}
-          style={{
-            color: 'blue',
-            border: '2px solid var(--ball-default-border-color)',
-          }}
-          clickCallback={() => {}}
-        ></MoveablePiece>
         <Board
           rows={this.state.rows}
           selected={this.state.selected}
           colors={this.colors}
           pieceOnClick={this.pieceOnClick}
+          pieceOnHover={this.pieceOnHover}
           turn={this.state.thisPlayerID}
+          lastClicked={this.state.lastClicked}
         ></Board>
       </div>
     );

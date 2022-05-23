@@ -2,6 +2,7 @@ import React from 'react';
 import './Game.css';
 
 import Board from './Board/Board';
+import MoveablePiece from './Piece/MoveablePiece';
 import * as gameLogic from './gameLogic';
 import * as gameSettings from './gameSettings';
 
@@ -86,12 +87,22 @@ class Game extends React.Component<GameProps, GameState> {
   render() {
     // console.log(this.state.rows);
     return (
-      <Board
-        rows={this.state.rows}
-        selected={this.state.selected}
-        colors={this.colors}
-        pieceOnClick={this.pieceOnClick}
-      ></Board>
+      <div className='Game'>
+        <MoveablePiece
+          id={'test'}
+          style={{
+            color: 'blue',
+            border: '2px solid var(--ball-default-border-color)',
+          }}
+          clickCallback={() => {}}
+        ></MoveablePiece>
+        <Board
+          rows={this.state.rows}
+          selected={this.state.selected}
+          colors={this.colors}
+          pieceOnClick={this.pieceOnClick}
+        ></Board>
+      </div>
     );
   }
 }

@@ -1,5 +1,5 @@
 import React, { Ref } from 'react';
-import './Board.css';
+import './Piece.css';
 
 interface PieceProps {
   id: string;
@@ -10,10 +10,12 @@ interface PieceProps {
 interface PieceState {
   top: number;
   left: number;
-  detached: boolean;
 }
 
-class Piece extends React.Component<PieceProps, PieceState> {
+export default class MoveablePiece extends React.Component<
+  PieceProps,
+  PieceState
+> {
   startOffsetX: number;
   startOffsetY: number;
   myRef: React.MutableRefObject<HTMLDivElement>;
@@ -26,7 +28,6 @@ class Piece extends React.Component<PieceProps, PieceState> {
     this.state = {
       top: 0,
       left: 0,
-      detached: false,
     };
   }
 
@@ -49,7 +50,6 @@ class Piece extends React.Component<PieceProps, PieceState> {
     this.startOffsetX = e.clientX - rect.left;
     this.startOffsetY = e.clientY - rect.top;
     this.setState({
-      detached: true,
       top: rect.top,
       left: rect.left,
     });
@@ -60,9 +60,6 @@ class Piece extends React.Component<PieceProps, PieceState> {
     console.log('up!');
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseup', this.onMouseUp);
-    this.setState({
-      detached: false,
-    });
   };
 
   onMouseMove = (e: MouseEvent) => {
@@ -80,21 +77,18 @@ class Piece extends React.Component<PieceProps, PieceState> {
 
   render() {
     return (
-      <div className='PlaceHolder'>
-        <div
-          ref={this.myRef}
-          className='BallHole'
-          id={this.props.id}
-          style={{
-            background: this.props.style.color,
-            border: this.props.style.border,
-            top: this.state.top,
-            left: this.state.left,
-            position: this.state.detached ? 'absolute' : 'static',
-          }}
-          onMouseDown={this.onMouseDown}
-        ></div>
-      </div>
+      <div
+        ref={this.myRef}
+        className='MoveablePiece'
+        id={this.props.id}
+        style={{
+          background: this.props.style.color,
+          border: this.props.style.border,
+          top: this.state.top,
+          left: this.state.left,
+        }}
+        onMouseDown={this.onMouseDown}
+      ></div>
     );
   }
 }

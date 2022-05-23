@@ -1,0 +1,19 @@
+.PlaceHolder {
+  width: 35px;
+  height: 35px;
+  margin: 8px 16px;
+}
+
+.StaticPiece {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  box-shadow: 10px 10px 15px 5px rgba(0, 0, 0, 0.1);
+}
+
+.MoveablePiece {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  position: fixed;
+}

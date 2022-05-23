@@ -495,18 +495,14 @@ export const changeTurn = (players: Player[], turn: number): number => {
   return newTurn;
 };
 
-const getDiagonalMoveableSquares = (
-  rows: Array<Array<Number>>,
+const getRelevantDiagonal = (
   square: [number, number],
   diagonals: [number, number][][]
-): [number, number][] => {
-  let res: [number, number][] = [];
-
+): [[number, number][], number] => {
   let myDiagonal: [number, number][] = [];
   let myIndex: number = 0;
 
   for (let diagonal of diagonals) {
-    // console.log(diagonal);
     let i = 0;
     for (let digSquare of diagonal) {
       if (digSquare[0] === square[0] && digSquare[1] === square[1]) {
@@ -517,19 +513,70 @@ const getDiagonalMoveableSquares = (
     }
   }
 
+  return [myDiagonal, myIndex];
+};
+
+const getDiagonalMoveableSquaresAdjacent = (
+  rows: Array<Array<Number>>,
+  square: [number, number],
+  diagonals: [number, number][][]
+): [number, number][] => {
+  let res: [number, number][] = [];
+
+  let [myDiagonal, myIndex] = getRelevantDiagonal(square, diagonals);
+
+  if (myIndex > 0) {
+    let toLandIndex = myDiagonal[myIndex - 1];
+    const toLandValue = rows[toLandIndex[1]][toLandIndex[0]];
+    if (toLandValue === 0) {
+      res.push(toLandIndex);
+    }
+  }
+
+  if (myIndex < myDiagonal.length - 1) {
+    let toLandIndex = myDiagonal[myIndex + 1];
+    const toLandValue = rows[toLandIndex[1]][toLandIndex[0]];
+    if (toLandValue === 0) {
+      res.push(toLandIndex);
+    }
+  }
+
+  return res;
+};
+
+const getDiagonalMoveableSquares = (
+  rows: Array<Array<Number>>,
+  square: [number, number],
+  diagonals: [number, number][][],
+  searchedSquares: Map<[number, number], boolean>
+): [number, number][] => {
+  let res: [number, number][] = [];
+
+  let [myDiagonal, myIndex] = getRelevantDiagonal(square, diagonals);
+
   if (myIndex > 1) {
-    let toJump = myDiagonal[myIndex - 1];
-    let toLand = myDiagonal[myIndex - 2];
-    if (rows[toJump[1]][toJump[0]] !== 0 && rows[toLand[1]][toLand[0]] === 0) {
-      res.push(toLand);
+    let toJumpIndex = myDiagonal[myIndex - 1];
+    let toLandIndex = myDiagonal[myIndex - 2];
+    if (!searchedSquares.has(toLandIndex)) {
+      let toJumpValue = rows[toJumpIndex[1]][toJumpIndex[0]];
+      let toLandValue = rows[toLandIndex[1]][toLandIndex[0]];
+      if (toLandValue === 0 && toJumpValue !== 0) {
+        res.push(toLandIndex);
+        searchedSquares.set(toLandIndex, true);
+      }
     }
   }
 
   if (myIndex < myDiagonal.length - 2) {
-    let toJump = myDiagonal[myIndex + 1];
-    let toLand = myDiagonal[myIndex + 2];
-    if (rows[toJump[1]][toJump[0]] !== 0 && rows[toLand[1]][toLand[0]] === 0) {
-      res.push(toLand);
+    let toJumpIndex = myDiagonal[myIndex + 1];
+    let toLandIndex = myDiagonal[myIndex + 2];
+    if (!searchedSquares.has(toLandIndex)) {
+      let toJumpValue = rows[toJumpIndex[1]][toJumpIndex[0]];
+      let toLandValue = rows[toLandIndex[1]][toLandIndex[0]];
+      if (toLandValue === 0 && toJumpValue !== 0) {
+        res.push(toLandIndex);
+        searchedSquares.set(toLandIndex, true);
+      }
     }
   }
 
@@ -541,10 +588,50 @@ export const getMoveableSquares = (
   square: [number, number]
 ): [number, number][] => {
   let res: [number, number][] = [];
+  let searchedSquares = new Map<[number, number], boolean>();
+  searchedSquares.set(square, true);
+  let searchQueue = [square];
 
-  res = res.concat(getDiagonalMoveableSquares(rows, square, leftDiagonals));
-  res = res.concat(getDiagonalMoveableSquares(rows, square, rightDiagonals));
-  res = res.concat(getDiagonalMoveableSquares(rows, square, rowDiagonals));
+  // recursively find all possible moves
+  while (searchQueue.length > 0) {
+    const squareToSearch = searchQueue.pop()!;
+    // find possible moves on left diagonals, right diagonals, and rows independantly
+    let FoundSquares = getDiagonalMoveableSquares(
+      rows,
+      squareToSearch,
+      leftDiagonals,
+      searchedSquares
+    );
+    FoundSquares = FoundSquares.concat(
+      getDiagonalMoveableSquares(
+        rows,
+        squareToSearch,
+        rightDiagonals,
+        searchedSquares
+      )
+    );
+    FoundSquares = FoundSquares.concat(
+      getDiagonalMoveableSquares(
+        rows,
+        squareToSearch,
+        rowDiagonals,
+        searchedSquares
+      )
+    );
+    searchQueue = searchQueue.concat(FoundSquares);
+    res = res.concat(FoundSquares);
+  }
+
+  // get remaining, adjacent squares. Note that these aren't dont recursively
+  res = res.concat(
+    getDiagonalMoveableSquaresAdjacent(rows, square, leftDiagonals)
+  );
+  res = res.concat(
+    getDiagonalMoveableSquaresAdjacent(rows, square, rightDiagonals)
+  );
+  res = res.concat(
+    getDiagonalMoveableSquaresAdjacent(rows, square, rowDiagonals)
+  );
 
   return res;
 };

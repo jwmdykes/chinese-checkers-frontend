@@ -635,3 +635,58 @@ export const getMoveableSquares = (
 
   return res;
 };
+
+const winningPositions: Map<number, [number, number][]> = new Map([
+  [
+    1,
+    [
+      [0, 0],
+      [0, 1],
+      [1, 1],
+      [0, 2],
+      [1, 2],
+      [2, 2],
+      [0, 3],
+      [1, 3],
+      [2, 3],
+      [3, 3],
+    ],
+  ],
+  [
+    2,
+    [
+      [0, 16],
+      [0, 15],
+      [1, 15],
+      [0, 14],
+      [1, 14],
+      [2, 14],
+      [0, 13],
+      [1, 13],
+      [2, 13],
+      [3, 13],
+    ],
+  ],
+]);
+
+export const getWinner = (
+  rows: Array<Array<Number>>,
+  players: Player[]
+): null | Player => {
+  for (let player of players) {
+    let playerWon = true;
+    const goal = winningPositions.get(player.id);
+    console.log(goal);
+    for (let square of goal!) {
+      if (rows[square[1]][square[0]] !== player.id) {
+        playerWon = false;
+        break;
+      }
+    }
+
+    if (playerWon) {
+      return player;
+    }
+  }
+  return null;
+};

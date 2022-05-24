@@ -3,9 +3,9 @@ import './Game.css';
 
 import Board from './Board/Board';
 import TurnIndicator from './TurnIndicator/TurnIndicator';
-import GameOverIndicator from './GameOverIndicator/GameOverIndicator';
 import * as gameLogic from './gameLogic';
 import * as gameSettings from './gameSettings';
+import GameOverOverlay from './GameOverIndicator/GameOverOverlay';
 
 interface GameProps {
   players: gameLogic.Player[];
@@ -21,13 +21,19 @@ interface GameState {
   turn: number;
   hovered: { x: number; y: number } | null;
   gameIsOver: boolean;
+  winner: null | gameLogic.Player;
 }
 
 class Game extends React.Component<GameProps, GameState> {
   colors!: Array<gameSettings.Color>;
-  moveableSquares!: null | [number, number][];
-  lastUpClicked!: { x: number; y: number } | null;
-  clickSound: HTMLAudioElement = new Audio('/sounds/game-sound-effects.wav');
+  moveableSquares: null | [number, number][] = null;
+  lastUpClicked: { x: number; y: number } | null = null;
+  clickSound: HTMLAudioElement = new Audio(
+    '/sounds/game-sound-effects-click.wav'
+  );
+  buttonSound: HTMLAudioElement = new Audio(
+    '/sounds/506052__mellau__button-click-3.wav'
+  );
   constructor(props: GameProps) {
     super(props);
 
@@ -38,21 +44,50 @@ class Game extends React.Component<GameProps, GameState> {
     }
 
     this.clickSound.volume = 0.7;
+    this.buttonSound.volume = 0.5;
 
     this.state = {
-      gameIsOver: true,
+      winner: null,
+      gameIsOver: false,
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
-      rows: JSON.parse(
-        JSON.stringify(gameSettings.StartingRows[this.props.players.length])
-      ),
+      // rows: JSON.parse(
+      //   JSON.stringify(gameSettings.StartingRows[this.props.players.length])
+      // ),
+      rows: JSON.parse(JSON.stringify(gameSettings.AlmostGameOverRow)),
       selected: JSON.parse(JSON.stringify(gameSettings.StartingSelected)),
       lastClicked: null,
       hovered: null,
     };
   }
 
-  checkGameOver = () => {};
+  resetGame = () => {
+    this.buttonSound.play();
+    this.setState({
+      winner: null,
+      gameIsOver: false,
+      turn: this.props.players[0].id,
+      thisPlayerID: this.props.players[0].id,
+      // rows: JSON.parse(
+      //   JSON.stringify(gameSettings.StartingRows[this.props.players.length])
+      // ),
+      rows: JSON.parse(JSON.stringify(gameSettings.AlmostGameOverRow)),
+      selected: JSON.parse(JSON.stringify(gameSettings.StartingSelected)),
+      lastClicked: null,
+      hovered: null,
+    });
+  };
+
+  checkGameOver = (rows: Array<Array<Number>>) => {
+    let newWinner = gameLogic.getWinner(rows, this.props.players);
+    console.log('winner is: ', newWinner);
+    if (newWinner) {
+      this.setState({
+        gameIsOver: true,
+        winner: newWinner,
+      });
+    }
+  };
 
   changeTurn = () => {
     // change whose turn it is. If `isSinglePlayer` prop is set,
@@ -95,7 +130,7 @@ class Game extends React.Component<GameProps, GameState> {
           selected: newSelected,
         });
 
-        this.checkGameOver();
+        this.checkGameOver(newRows);
 
         this.changeTurn();
 
@@ -225,7 +260,9 @@ class Game extends React.Component<GameProps, GameState> {
             turn={this.state.thisPlayerID}
           ></TurnIndicator>
         )}
-        {!this.state.gameIsOver || <GameOverIndicator></GameOverIndicator>}
+        {!this.state.gameIsOver || (
+          <GameOverOverlay clickCallback={this.resetGame}></GameOverOverlay>
+        )}
       </div>
     );
   }

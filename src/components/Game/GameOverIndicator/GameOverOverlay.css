@@ -1,0 +1,42 @@
+.UIBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  font-size: xx-large;
+  font-weight: bold;
+  color: rgb(7, 0, 0);
+  border: 3px solid rgb(5, 3, 0);
+  border-radius: 20px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  padding: 50px;
+}
+
+.GameOverIndicator {
+  left: 0;
+  right: 0;
+  top: 0%;
+  bottom: 50%;
+  margin: auto;
+  height: 250px;
+  width: 600px;
+  background-color: rgb(56, 64, 185);
+}
+
+.NewGameButton {
+  left: 0;
+  right: 0;
+  top: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  height: 200px;
+
+  background-color: rgb(22, 129, 67);
+}
+
+.NewGameButton:hover {
+  background-color: rgb(13, 65, 13);
+  cursor: pointer;
+}

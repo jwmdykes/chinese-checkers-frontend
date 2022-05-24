@@ -2,7 +2,8 @@ import React from 'react';
 import './Game.css';
 
 import Board from './Board/Board';
-import MoveablePiece from './Piece/MoveablePiece';
+import TurnIndicator from './TurnIndicator/TurnIndicator';
+import GameOverIndicator from './GameOverIndicator/GameOverIndicator';
 import * as gameLogic from './gameLogic';
 import * as gameSettings from './gameSettings';
 
@@ -19,6 +20,7 @@ interface GameState {
   thisPlayerID: number; // which player are we? Can be modified so that we move each player's pieces.
   turn: number;
   hovered: { x: number; y: number } | null;
+  gameIsOver: boolean;
 }
 
 class Game extends React.Component<GameProps, GameState> {
@@ -38,6 +40,7 @@ class Game extends React.Component<GameProps, GameState> {
     this.clickSound.volume = 0.7;
 
     this.state = {
+      gameIsOver: true,
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
       rows: JSON.parse(
@@ -48,6 +51,8 @@ class Game extends React.Component<GameProps, GameState> {
       hovered: null,
     };
   }
+
+  checkGameOver = () => {};
 
   changeTurn = () => {
     // change whose turn it is. If `isSinglePlayer` prop is set,
@@ -85,12 +90,15 @@ class Game extends React.Component<GameProps, GameState> {
 
         this.clickSound.play();
 
-        this.changeTurn();
-
         this.setState({
           rows: newRows,
           selected: newSelected,
         });
+
+        this.checkGameOver();
+
+        this.changeTurn();
+
         break;
       }
     }
@@ -196,17 +204,28 @@ class Game extends React.Component<GameProps, GameState> {
     // console.log(this.state.rows);
     return (
       <div className='Game'>
-        <Board
-          rows={this.state.rows}
-          selected={this.state.selected}
-          colors={this.colors}
-          pieceOnMouseDown={this.pieceOnMouseDown}
-          pieceOnMouseUp={this.pieceOnMouseUp}
-          pieceOnHover={this.pieceOnHover}
-          pieceOnLeave={this.pieceOnLeave}
-          turn={this.state.thisPlayerID}
-          lastClicked={this.state.lastClicked}
-        ></Board>
+        <div
+          className='BlurContainer'
+          style={{ filter: this.state.gameIsOver ? 'blur(3px)' : 'none' }}
+        >
+          <Board
+            rows={this.state.rows}
+            selected={this.state.selected}
+            colors={this.colors}
+            pieceOnMouseDown={this.pieceOnMouseDown}
+            pieceOnMouseUp={this.pieceOnMouseUp}
+            pieceOnHover={this.pieceOnHover}
+            pieceOnLeave={this.pieceOnLeave}
+            turn={this.state.thisPlayerID}
+          ></Board>
+        </div>
+        {this.state.gameIsOver || (
+          <TurnIndicator
+            colors={this.colors}
+            turn={this.state.thisPlayerID}
+          ></TurnIndicator>
+        )}
+        {!this.state.gameIsOver || <GameOverIndicator></GameOverIndicator>}
       </div>
     );
   }

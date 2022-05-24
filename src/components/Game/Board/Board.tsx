@@ -1,6 +1,4 @@
-import React, { Ref } from 'react';
-import { colors } from '../gameSettings';
-import StaticPiece from '../Piece/StaticPiece';
+import React from 'react';
 import * as gameSettings from '../gameSettings';
 import './Board.css';
 import MoveablePiece from '../Piece/MoveablePiece';
@@ -14,7 +12,6 @@ interface RowProps {
   mouseUpCallback(e: React.MouseEvent): void;
   mouseEnterCallback(e: React.MouseEvent): void;
   mouseLeaveCallback(e: React.MouseEvent): void;
-  lastClicked: { x: number; y: number } | null;
   turn: number;
 }
 
@@ -57,19 +54,10 @@ interface BoardProps {
   pieceOnHover(e: React.MouseEvent): void;
   pieceOnLeave(e: React.MouseEvent): void;
   turn: number;
-  lastClicked: { x: number; y: number } | null;
 }
 
 class Board extends React.Component<BoardProps> {
   render() {
-    let color = this.props.colors[this.props.turn];
-    let backgroundColor: gameSettings.Color = {
-      type: color.type,
-      hue: color.hue,
-      saturation: color.saturation,
-      brightness: color.brightness + 15,
-    };
-    const backgroundColorString = gameSettings.colorString(backgroundColor);
     return (
       <div className='Board'>
         {this.props.rows.map((value: Array<Number>, index: Number) => {
@@ -84,19 +72,10 @@ class Board extends React.Component<BoardProps> {
               mouseUpCallback={this.props.pieceOnMouseUp}
               mouseEnterCallback={this.props.pieceOnHover}
               mouseLeaveCallback={this.props.pieceOnLeave}
-              lastClicked={this.props.lastClicked}
               turn={this.props.turn}
             ></Row>
           );
         })}
-        <div
-          className='TurnIndicator'
-          style={{
-            background: backgroundColorString ? backgroundColorString : 'white',
-          }}
-        >
-          It is Player {this.props.turn || 'Nobody'}'s turn to move.
-        </div>
       </div>
     );
   }

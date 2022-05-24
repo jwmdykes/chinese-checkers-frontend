@@ -14,7 +14,6 @@ for (let i = 0; i < 17; i++) {
   rows[i] = Array(rowLengths[i]).fill(0);
   selected[i] = Array(rowLengths[i]).fill(0);
 }
-const lastClicked = null;
 
 describe('<Board />', () => {
   test('it should mount', () => {
@@ -28,7 +27,6 @@ describe('<Board />', () => {
         pieceOnHover={(e) => {}}
         pieceOnLeave={(e) => {}}
         turn={1}
-        lastClicked={lastClicked}
       />
     );
   });

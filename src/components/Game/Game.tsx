@@ -68,10 +68,9 @@ class Game extends React.Component<GameProps, GameState> {
       gameIsOver: false,
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
-      // rows: JSON.parse(
-      //   JSON.stringify(gameSettings.StartingRows[this.props.players.length])
-      // ),
-      rows: JSON.parse(JSON.stringify(gameSettings.AlmostGameOverRow)),
+      rows: JSON.parse(
+        JSON.stringify(gameSettings.StartingRows[this.props.players.length])
+      ),
       selected: JSON.parse(JSON.stringify(gameSettings.StartingSelected)),
       lastClicked: null,
       hovered: null,
@@ -261,7 +260,11 @@ class Game extends React.Component<GameProps, GameState> {
           ></TurnIndicator>
         )}
         {!this.state.gameIsOver || (
-          <GameOverOverlay clickCallback={this.resetGame}></GameOverOverlay>
+          <GameOverOverlay
+            clickCallback={this.resetGame}
+            winner={this.state.winner!}
+            colors={this.colors}
+          ></GameOverOverlay>
         )}
       </div>
     );

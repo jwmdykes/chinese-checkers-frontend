@@ -21,15 +21,16 @@ class Row extends React.Component<RowProps> {
       <div className='Row'>
         {this.props.row.map((value: Number, index: Number) => {
           const id = JSON.stringify({ x: index, y: this.props.rowNumber });
-          const color = gameSettings.colorString(this.props.colors[+value]);
+          const color = this.props.colors[+value];
           const selected = this.props.selected[+index]
             ? '2px solid var(--ball-border-color)'
             : '2px solid var(--ball-default-border-color)';
-          const style = { color: color, border: selected };
+          const style = { border: selected };
           const shouldMove = value === this.props.turn;
           return (
             <MoveablePiece
               key={+index}
+              color={color}
               id={id}
               style={style}
               mouseDownCallback={this.props.mouseDownCallback}

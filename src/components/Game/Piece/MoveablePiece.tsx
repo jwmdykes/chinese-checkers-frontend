@@ -4,7 +4,8 @@ import * as gameSettings from '../gameSettings';
 
 interface PieceProps {
   id: string;
-  style: { color: string; border: string };
+  style: { border: string };
+  color: gameSettings.Color;
   mouseDownCallback(e: React.MouseEvent): void;
   mouseUpCallback(e: React.MouseEvent): void;
   mouseEnterCallback(e: React.MouseEvent): void;
@@ -96,6 +97,10 @@ export default class MoveablePiece extends React.Component<
   };
 
   render() {
+    let shadowColor: gameSettings.Color = JSON.parse(
+      JSON.stringify(this.props.color)
+    );
+    shadowColor.brightness = shadowColor.brightness - 30;
     return (
       <div className='PlaceHolder'>
         <div
@@ -103,7 +108,7 @@ export default class MoveablePiece extends React.Component<
           className='Piece'
           id={this.props.id}
           style={{
-            background: this.props.style.color,
+            background: gameSettings.colorString(this.props.color),
             border: this.props.style.border,
             top: this.state.top,
             left: this.state.left,
@@ -124,6 +129,9 @@ export default class MoveablePiece extends React.Component<
               border: this.props.style.border,
               position: 'static',
               cursor: this.props.shouldMove ? 'pointer' : 'default',
+              // boxShadow:
+              //   'inset 2px 1px 9px 1px ' +
+              //   gameSettings.colorString(shadowColor),
             }}
           ></div>
         )}

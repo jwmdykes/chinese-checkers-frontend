@@ -25,6 +25,7 @@ class Game extends React.Component<GameProps, GameState> {
   colors!: Array<gameSettings.Color>;
   moveableSquares!: null | [number, number][];
   lastUpClicked!: { x: number; y: number } | null;
+  clickSound: HTMLAudioElement = new Audio('/sounds/game-sound-effects.wav');
   constructor(props: GameProps) {
     super(props);
 
@@ -33,6 +34,8 @@ class Game extends React.Component<GameProps, GameState> {
       this.colors[this.props.players[i].id] =
         gameSettings.colors[this.props.players[i].color];
     }
+
+    this.clickSound.volume = 0.7;
 
     this.state = {
       turn: this.props.players[0].id,
@@ -79,6 +82,8 @@ class Game extends React.Component<GameProps, GameState> {
         let newRows = JSON.parse(JSON.stringify(this.state.rows));
         newRows[source.y][source.x] = 0;
         newRows[dest.y][dest.x] = this.state.thisPlayerID;
+
+        this.clickSound.play();
 
         this.changeTurn();
 

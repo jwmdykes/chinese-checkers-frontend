@@ -18,10 +18,10 @@ root.render(
       players={[
         Settings.Player1,
         Settings.Player2,
-        Settings.Player3,
-        Settings.Player4,
-        Settings.Player5,
-        Settings.Player6,
+        // Settings.Player3,
+        // Settings.Player4,
+        // Settings.Player5,
+        // Settings.Player6,
       ]}
       availColors={Settings.colors}
       isSinglePlayer={true}

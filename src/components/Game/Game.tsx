@@ -6,6 +6,8 @@ import TurnIndicator from './TurnIndicator/TurnIndicator';
 import * as gameLogic from './gameLogic';
 import * as gameSettings from './gameSettings';
 import GameOverOverlay from './GameOverIndicator/GameOverOverlay';
+import SocketIOButton from './GameOverIndicator/SocketIOButton';
+import connectToAPI from './socketio';
 
 interface GameProps {
   players: gameLogic.Player[];
@@ -266,6 +268,11 @@ class Game extends React.Component<GameProps, GameState> {
             colors={this.colors}
           ></GameOverOverlay>
         )}
+        <SocketIOButton
+          clickCallback={() => {
+            connectToAPI();
+          }}
+        ></SocketIOButton>
       </div>
     );
   }

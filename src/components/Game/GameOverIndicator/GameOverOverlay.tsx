@@ -2,20 +2,7 @@ import React, { Component } from 'react';
 import './GameOverOverlay.css';
 import * as gameLogic from '../gameLogic';
 import * as gameSettings from '../gameSettings';
-
-interface NewGameButtonProps {
-  clickCallback(e: React.MouseEvent): void;
-}
-
-class NewGameButton extends Component<NewGameButtonProps> {
-  render() {
-    return (
-      <div className='NewGameButton UIBox' onClick={this.props.clickCallback}>
-        New Game
-      </div>
-    );
-  }
-}
+import GameButton from './GameButton';
 
 interface GameOverIndicatorProps {
   colors: Array<gameSettings.Color>;
@@ -58,7 +45,11 @@ export default class GameOverOverlay extends Component<GameOverOverlayProps> {
           winner={this.props.winner}
           colors={this.props.colors}
         ></GameOverIndicator>
-        <NewGameButton clickCallback={this.props.clickCallback}></NewGameButton>
+        <GameButton
+          extraClassNames='NewGameButton'
+          text='New Game'
+          clickCallback={this.props.clickCallback}
+        ></GameButton>
       </div>
     );
   }

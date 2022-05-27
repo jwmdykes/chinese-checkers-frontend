@@ -6,8 +6,10 @@ import TurnIndicator from './TurnIndicator/TurnIndicator';
 import * as gameLogic from './gameLogic';
 import * as gameSettings from './gameSettings';
 import GameOverOverlay from './GameOverIndicator/GameOverOverlay';
-import SocketIOButton from './GameOverIndicator/SocketIOButton';
-import connectToAPI from './socketio';
+import GameButton from './GameOverIndicator/GameButton';
+import API from './apiCalls';
+import { Socket } from 'socket.io-client';
+import classNames from 'classnames';
 
 interface GameProps {
   players: gameLogic.Player[];
@@ -23,10 +25,12 @@ interface GameState {
   turn: number;
   hovered: { x: number; y: number } | null;
   gameIsOver: boolean;
+  gameNotStarted: boolean;
   winner: null | gameLogic.Player;
 }
 
 class Game extends React.Component<GameProps, GameState> {
+  socket!: Socket;
   colors!: Array<gameSettings.Color>;
   moveableSquares: null | [number, number][] = null;
   lastUpClicked: { x: number; y: number } | null = null;
@@ -51,6 +55,7 @@ class Game extends React.Component<GameProps, GameState> {
     this.state = {
       winner: null,
       gameIsOver: false,
+      gameNotStarted: true,
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
       // rows: JSON.parse(
@@ -236,13 +241,25 @@ class Game extends React.Component<GameProps, GameState> {
     }
   };
 
+  createOrJoinGame = () => {
+    this.socket = API.connectToAPI();
+    API.createGame().then((res) => {
+      API.joinGame(res.data, this.socket);
+    });
+  };
+
   render() {
     // console.log(this.state.rows);
     return (
       <div className='Game'>
         <div
           className='BlurContainer'
-          style={{ filter: this.state.gameIsOver ? 'blur(3px)' : 'none' }}
+          style={{
+            filter:
+              this.state.gameIsOver || this.state.gameNotStarted
+                ? 'blur(4px)'
+                : 'none',
+          }}
         >
           <Board
             rows={this.state.rows}
@@ -255,7 +272,7 @@ class Game extends React.Component<GameProps, GameState> {
             turn={this.state.thisPlayerID}
           ></Board>
         </div>
-        {this.state.gameIsOver || (
+        {this.state.gameNotStarted || this.state.gameIsOver || (
           <TurnIndicator
             colors={this.colors}
             turn={this.state.thisPlayerID}
@@ -268,11 +285,11 @@ class Game extends React.Component<GameProps, GameState> {
             colors={this.colors}
           ></GameOverOverlay>
         )}
-        <SocketIOButton
-          clickCallback={() => {
-            connectToAPI();
-          }}
-        ></SocketIOButton>
+        <GameButton
+          extraClassNames={classNames('JoinGameButton')}
+          text='Create Or Join Game'
+          clickCallback={this.createOrJoinGame}
+        ></GameButton>
       </div>
     );
   }

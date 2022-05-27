@@ -13,6 +13,15 @@
   padding: 50px;
 }
 
+.GameButton {
+  background-color: hsl(32, 38%, 44%);
+}
+
+.GameButton:hover {
+  background-color: hsl(32, 56%, 23%);
+  cursor: pointer;
+}
+
 .GameOverIndicator {
   left: 0;
   right: 0;
@@ -32,11 +41,4 @@
   margin-right: auto;
   width: 400px;
   height: 200px;
-
-  background-color: hsl(32, 38%, 44%);
-}
-
-.NewGameButton:hover {
-  background-color: hsl(32, 56%, 23%);
-  cursor: pointer;
 }

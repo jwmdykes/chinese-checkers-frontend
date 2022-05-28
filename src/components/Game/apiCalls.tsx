@@ -16,6 +16,10 @@ const joinGame = (gameID: string, socket: any) => {
   socket.emit('join', gameID);
 };
 
+const listGames = () => {
+  return axios.get(`http://${config.API_HOSTPORT}/list-games/chinese-checkers`);
+};
+
 export default {
   connectToAPI: connectToAPI,
   createGame: createGame,

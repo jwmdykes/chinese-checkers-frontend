@@ -30,7 +30,7 @@ interface GameState {
 }
 
 class Game extends React.Component<GameProps, GameState> {
-  socket!: Socket;
+  socket: Socket | null = null;
   colors!: Array<gameSettings.Color>;
   moveableSquares: null | [number, number][] = null;
   lastUpClicked: { x: number; y: number } | null = null;
@@ -66,6 +66,12 @@ class Game extends React.Component<GameProps, GameState> {
       lastClicked: null,
       hovered: null,
     };
+  }
+
+  componentWillUnmount() {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
   }
 
   resetGame = () => {

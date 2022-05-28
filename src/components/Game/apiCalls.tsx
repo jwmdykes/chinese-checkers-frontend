@@ -4,13 +4,20 @@ import axios from 'axios';
 import * as gameLogic from './gameLogic';
 
 const connectToAPI = () => {
-  const socket = io(config.API_HOSTPORT);
+  const socket = io(
+    `http${config.API_ISHTTPS ? 's' : ''}://${config.API_HOSTPORT}`,
+    { secure: true }
+  );
   console.log(`location of server is: ${config.API_HOSTPORT}`);
   return socket;
 };
 
 const createGame = () => {
-  return axios.get(`http://${config.API_HOSTPORT}/create/chinese-checkers`);
+  return axios.get(
+    `http${config.API_ISHTTPS ? 's' : ''}://${
+      config.API_HOSTPORT
+    }/create/chinese-checkers`
+  );
 };
 
 const joinGame = (
@@ -38,7 +45,11 @@ const sendMove = (
 };
 
 const listGames = () => {
-  return axios.get(`http://${config.API_HOSTPORT}/list-games/chinese-checkers`);
+  return axios.get(
+    `http${config.API_ISHTTPS ? 's' : ''}://${
+      config.API_HOSTPORT
+    }/list-games/chinese-checkers`
+  );
 };
 
 export default {

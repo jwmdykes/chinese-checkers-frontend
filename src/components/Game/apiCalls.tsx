@@ -5,7 +5,7 @@ import * as gameLogic from './gameLogic';
 
 const connectToAPI = () => {
   const socket = io(config.API_HOSTPORT);
-  console.log(config.API_HOSTPORT);
+  console.log(`location of server is: ${config.API_HOSTPORT}`);
   return socket;
 };
 

@@ -1,7 +1,7 @@
 // api server configuration
-const port = process.env.PORT || 5000;
-const ip = process.env.IP || 'localhost';
-const host = process.env.HOST || 'localhost';
+const port = process.env.REACT_APP_PORT;
+const ip = process.env.REACT_APP_IP;
+const host = process.env.REACT_APP_HOST;
 
 const config = {
   API_PORT: port,

@@ -8,6 +8,21 @@ export interface Square {
   selected: boolean;
 }
 
+export interface GameObject {
+  gameID: string;
+  gameType: string;
+  host: string;
+  players: Player[];
+  targetPlayers: number;
+  rows: Array<Array<Number>>;
+}
+
+export interface MoveObject {
+  player: Player;
+  source: { x: number; y: number };
+  dest: { x: number; y: number };
+}
+
 export const fillBoard0s = (
   rows: Array<Array<Number>>,
   rowLengths: Array<Number>
@@ -689,4 +704,25 @@ export const getWinner = (
     }
   }
   return null;
+};
+
+export const updateRows = (
+  rows: Array<Array<Number>>,
+  source: { x: number; y: number },
+  dest: { x: number; y: number },
+  player: Player
+) => {
+  let newRows = JSON.parse(JSON.stringify(rows));
+  newRows[source.y][source.x] = 0;
+  newRows[dest.y][dest.x] = player.id;
+  return newRows;
+};
+
+export const getFirstAvailableGame = (data: any) => {
+  for (let game of data) {
+    if (game.players.length < game.targetPlayers) {
+      return game.gameID;
+    }
+  }
+  return '';
 };

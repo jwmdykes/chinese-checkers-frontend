@@ -25,8 +25,9 @@ interface GameState {
   turn: number;
   hovered: { x: number; y: number } | null;
   gameIsOver: boolean;
-  gameNotStarted: boolean;
+  gameNotJoined: boolean;
   winner: null | gameLogic.Player;
+  gameID: string | null;
 }
 
 class Game extends React.Component<GameProps, GameState> {
@@ -53,9 +54,10 @@ class Game extends React.Component<GameProps, GameState> {
     this.buttonSound.volume = 0.5;
 
     this.state = {
+      gameID: null,
       winner: null,
       gameIsOver: false,
-      gameNotStarted: true,
+      gameNotJoined: true,
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
       // rows: JSON.parse(
@@ -78,6 +80,7 @@ class Game extends React.Component<GameProps, GameState> {
     this.buttonSound.play();
     this.setState({
       winner: null,
+      gameNotJoined: true,
       gameIsOver: false,
       turn: this.props.players[0].id,
       thisPlayerID: this.props.players[0].id,
@@ -104,11 +107,12 @@ class Game extends React.Component<GameProps, GameState> {
   changeTurn = () => {
     // change whose turn it is. If `isSinglePlayer` prop is set,
     // retain control of the pieces even after the player changes.
-
+    console.log('players: ', this.props.players);
     let newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
     let newThisPlayerID = this.props.isSinglePlayer
       ? newTurn
       : this.state.thisPlayerID;
+    newThisPlayerID = this.state.thisPlayerID; // don't change turns
 
     this.setState({
       turn: newTurn,
@@ -117,6 +121,7 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   tryMovePiece = (
+    player: gameLogic.Player,
     source: { x: number; y: number },
     dest: { x: number; y: number }
   ): void => {
@@ -127,13 +132,22 @@ class Game extends React.Component<GameProps, GameState> {
 
     for (let square of this.moveableSquares) {
       if (square[0] === dest.x && square[1] === dest.y) {
+        // send move to server, if we're in an online game
+        if (this.state.gameID && this.socket) {
+          this.sendMove({ player: player, source: source, dest: dest });
+        }
+
         this.moveableSquares = null;
         let newSelected = JSON.parse(
           JSON.stringify(gameSettings.StartingSelected)
         );
-        let newRows = JSON.parse(JSON.stringify(this.state.rows));
-        newRows[source.y][source.x] = 0;
-        newRows[dest.y][dest.x] = this.state.thisPlayerID;
+
+        let newRows = gameLogic.updateRows(
+          this.state.rows,
+          source,
+          dest,
+          player
+        );
 
         this.clickSound.play();
 
@@ -213,7 +227,11 @@ class Game extends React.Component<GameProps, GameState> {
     }
     // Otherwise, move the piece to the new square if it is a legal move
     else if (this.moveableSquares && this.state.lastClicked) {
-      this.tryMovePiece(this.state.lastClicked, clicked);
+      this.tryMovePiece(
+        this.props.players[this.state.thisPlayerID - 1],
+        this.state.lastClicked,
+        clicked
+      );
     }
   };
 
@@ -243,14 +261,64 @@ class Game extends React.Component<GameProps, GameState> {
     // Move the piece if possible
     const hovered = this.state.hovered;
     if (this.moveableSquares && hovered && this.state.lastClicked) {
-      this.tryMovePiece(this.state.lastClicked, hovered);
+      this.tryMovePiece(
+        this.props.players[this.state.thisPlayerID - 1],
+        this.state.lastClicked,
+        hovered
+      );
     }
   };
 
-  createOrJoinGame = () => {
-    this.socket = API.connectToAPI();
-    API.createGame().then((res) => {
-      API.joinGame(res.data, this.socket);
+  receiveJoinGame = (response: any) => {
+    console.log('joining game ', response, 'in react component UI');
+    this.setState({
+      thisPlayerID: response.player.id,
+      rows: response.game.rows,
+      gameID: response.game.gameID,
+      gameNotJoined: false,
+    });
+    // listen to game udpates
+    this.socket!.on('move', this.receievemove);
+  };
+
+  receievemove = (data: { gameID: string; move: gameLogic.MoveObject }) => {
+    console.log('received move: ', data.move);
+    this.moveableSquares = gameLogic.getMoveableSquares(this.state.rows, [
+      data.move.source.x,
+      data.move.source.y,
+    ]);
+    this.tryMovePiece(data.move.player, data.move.source, data.move.dest);
+  };
+
+  sendMove = (move: gameLogic.MoveObject) => {
+    if (this.state.gameID && this.socket) {
+      API.sendMove(this.state.gameID, move, this.socket, this.receievemove);
+    }
+  };
+
+  sendCreateOrJoinGame = () => {
+    if (!this.state.gameNotJoined) {
+      console.log('Already joined game.');
+      return;
+    }
+
+    if (!this.socket) {
+      this.socket = API.connectToAPI();
+    }
+
+    API.listGames().then((res) => {
+      console.log('games: ', res.data);
+      const gameID = gameLogic.getFirstAvailableGame(res.data);
+      if (gameID && this.socket) {
+        API.joinGame(gameID, this.socket, this.receiveJoinGame); // send join request for game
+      } else if (this.socket) {
+        API.createGame().then((res) => {
+          if (this.socket) {
+            const gameID = gameLogic.getFirstAvailableGame(res.data);
+            API.joinGame(gameID, this.socket, this.receiveJoinGame); // send join request for game
+          }
+        });
+      }
     });
   };
 
@@ -262,7 +330,7 @@ class Game extends React.Component<GameProps, GameState> {
           className='BlurContainer'
           style={{
             filter:
-              this.state.gameIsOver || this.state.gameNotStarted
+              this.state.gameIsOver || this.state.gameNotJoined
                 ? 'blur(4px)'
                 : 'none',
           }}
@@ -275,13 +343,13 @@ class Game extends React.Component<GameProps, GameState> {
             pieceOnMouseUp={this.pieceOnMouseUp}
             pieceOnHover={this.pieceOnHover}
             pieceOnLeave={this.pieceOnLeave}
-            turn={this.state.thisPlayerID}
+            turn={this.state.turn}
           ></Board>
         </div>
-        {this.state.gameNotStarted || this.state.gameIsOver || (
+        {this.state.gameNotJoined || this.state.gameIsOver || (
           <TurnIndicator
             colors={this.colors}
-            turn={this.state.thisPlayerID}
+            turn={this.state.turn}
           ></TurnIndicator>
         )}
         {!this.state.gameIsOver || (
@@ -291,11 +359,13 @@ class Game extends React.Component<GameProps, GameState> {
             colors={this.colors}
           ></GameOverOverlay>
         )}
-        <GameButton
-          extraClassNames={classNames('JoinGameButton')}
-          text='Create Or Join Game'
-          clickCallback={this.createOrJoinGame}
-        ></GameButton>
+        {!this.state.gameNotJoined || (
+          <GameButton
+            extraClassNames={classNames('JoinGameButton')}
+            text='Create Or Join Game'
+            clickCallback={this.sendCreateOrJoinGame}
+          ></GameButton>
+        )}
       </div>
     );
   }

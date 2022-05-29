@@ -102,7 +102,7 @@ export default class MoveablePiece extends React.Component<
     );
     shadowColor.brightness = shadowColor.brightness - 30;
     return (
-      <div className='PlaceHolder'>
+      <div className='PlaceHolder' id={this.props.id}>
         <div
           ref={this.myRef}
           className='Piece'
@@ -117,7 +117,7 @@ export default class MoveablePiece extends React.Component<
           }}
           onPointerDown={this.onMouseDown}
           onPointerUp={this.props.mouseUpCallback}
-          onPointerOver={this.props.mouseEnterCallback}
+          onPointerEnter={this.props.mouseEnterCallback}
           onPointerLeave={this.props.mouseLeaveCallback}
         ></div>
         {this.state.position === 'static' || (

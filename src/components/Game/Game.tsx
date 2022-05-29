@@ -211,8 +211,8 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnHover = (e: React.MouseEvent) => {
-    // console.log('HOVER');
-    // console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
+    console.log('HOVER');
+    console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
 
     const target = e.nativeEvent.target as HTMLDivElement;
     const clicked = JSON.parse(target.id);

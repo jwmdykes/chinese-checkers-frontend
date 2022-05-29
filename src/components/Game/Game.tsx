@@ -270,12 +270,13 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   receiveJoinGame = (response: any) => {
-    console.log('joining game ', response, 'in react component UI');
+    // console.log('joining game ', response, 'in react component UI');
     this.setState({
       thisPlayerID: response.player.id,
       rows: response.game.rows,
       gameID: response.game.gameID,
       gameNotJoined: false,
+      turn: response.game.turn,
     });
     // listen to game udpates
     this.socket!.on('move', this.receievemove);
@@ -310,11 +311,13 @@ class Game extends React.Component<GameProps, GameState> {
       console.log('games: ', res.data);
       const gameID = gameLogic.getFirstAvailableGame(res.data);
       if (gameID && this.socket) {
+        console.log('joining existing game: ', gameID);
         API.joinGame(gameID, this.socket, this.receiveJoinGame); // send join request for game
       } else if (this.socket) {
         API.createGame().then((res) => {
           if (this.socket) {
             const gameID = gameLogic.getFirstAvailableGame(res.data);
+            console.log('joining created game: ', gameID);
             API.joinGame(gameID, this.socket, this.receiveJoinGame); // send join request for game
           }
         });

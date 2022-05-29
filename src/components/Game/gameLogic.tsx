@@ -13,8 +13,11 @@ export interface GameObject {
   gameType: string;
   host: string;
   players: Player[];
-  targetPlayers: number;
+  availableSeats: boolean[];
+  targetPlayers: Player[];
+  numTargetPlayers: number;
   rows: Array<Array<Number>>;
+  turn: number;
 }
 
 export interface MoveObject {
@@ -719,8 +722,9 @@ export const updateRows = (
 };
 
 export const getFirstAvailableGame = (data: any) => {
+  console.log('data: ', data);
   for (let game of data) {
-    if (game.players.length < game.targetPlayers) {
+    if (game.players.length < game.numTargetPlayers) {
       return game.gameID;
     }
   }

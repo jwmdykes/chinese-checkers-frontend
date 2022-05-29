@@ -403,52 +403,57 @@ class Game extends React.Component<GameProps, GameState> {
   render() {
     // console.log(this.state.rows);
     return (
-      <div className='Game'>
-        <div
-          className='BlurContainer'
-          style={{
-            filter:
-              this.state.gameIsOver || this.state.gameNotJoined
-                ? 'blur(4px)'
-                : 'none',
-          }}
-        >
-          <Board
-            rows={this.state.rows}
-            selected={this.state.selected}
-            colors={this.colors}
-            pieceOnMouseDown={this.pieceOnMouseDown}
-            pieceOnMouseUp={this.pieceOnMouseUp}
-            pieceOnHover={this.pieceOnHover}
-            pieceOnLeave={this.pieceOnLeave}
-            turn={this.state.turn}
-          ></Board>
-        </div>
-        {this.state.gameNotJoined || this.state.gameIsOver || (
-          <TurnIndicator
-            colors={this.colors}
-            turn={this.state.turn}
-          ></TurnIndicator>
-        )}
-        {this.state.gameNotJoined || this.state.gameIsOver || (
-          <div className='NumPlayersIndicator'>
-            Players: {this.state.players.length}/{this.state.numTargetPlayers}
+      <div className='Align'>
+        <div className='GameContainer'>
+          <div className='Game'>
+            <div
+              className='BlurContainer'
+              style={{
+                filter:
+                  this.state.gameIsOver || this.state.gameNotJoined
+                    ? 'blur(4px)'
+                    : 'none',
+              }}
+            >
+              <Board
+                rows={this.state.rows}
+                selected={this.state.selected}
+                colors={this.colors}
+                pieceOnMouseDown={this.pieceOnMouseDown}
+                pieceOnMouseUp={this.pieceOnMouseUp}
+                pieceOnHover={this.pieceOnHover}
+                pieceOnLeave={this.pieceOnLeave}
+                turn={this.state.turn}
+              ></Board>
+            </div>
+            {this.state.gameNotJoined || this.state.gameIsOver || (
+              <TurnIndicator
+                colors={this.colors}
+                turn={this.state.turn}
+              ></TurnIndicator>
+            )}
+            {this.state.gameNotJoined || this.state.gameIsOver || (
+              <div className='NumPlayersIndicator'>
+                Players: {this.state.players.length}/
+                {this.state.numTargetPlayers}
+              </div>
+            )}
+            {!this.state.gameIsOver || (
+              <GameOverOverlay
+                clickCallback={this.resetGame}
+                winner={this.state.winner!}
+                colors={this.colors}
+              ></GameOverOverlay>
+            )}
+            {!this.state.gameNotJoined || (
+              <GameButton
+                extraClassNames={classNames('JoinGameButton')}
+                text='Create Or Join Game'
+                clickCallback={this.sendCreateOrJoinGame}
+              ></GameButton>
+            )}
           </div>
-        )}
-        {!this.state.gameIsOver || (
-          <GameOverOverlay
-            clickCallback={this.resetGame}
-            winner={this.state.winner!}
-            colors={this.colors}
-          ></GameOverOverlay>
-        )}
-        {!this.state.gameNotJoined || (
-          <GameButton
-            extraClassNames={classNames('JoinGameButton')}
-            text='Create Or Join Game'
-            clickCallback={this.sendCreateOrJoinGame}
-          ></GameButton>
-        )}
+        </div>
       </div>
     );
   }

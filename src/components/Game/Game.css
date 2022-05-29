@@ -1,7 +1,35 @@
-.Game {
-  position: relative;
+.Align {
+  text-align: center;
+}
+
+.GameContainer::before {
+  content: '';
   height: 100%;
 }
+
+.GameContainer::before,
+.Game {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.GameContainer {
+  width: 100vm;
+  height: 100vm; /* For IE9 */
+  width: 100vmin;
+  height: 100vmin;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: calc((100vh - 100vmin) / 2);
+  font-size: 0; /* Remove the gap between inline level chidren */
+}
+
+.Game {
+  background-color: red;
+  width: 100%;
+  height: 100%;
+}
+
 .BlurContainer {
   height: 100%;
 }

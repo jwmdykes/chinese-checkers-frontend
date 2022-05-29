@@ -1,13 +1,12 @@
 .PlaceHolder {
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  margin: 8px 16px;
+  height: 30px;
+  width: 30px;
+  margin: 16px;
 }
 
 .Piece {
-  height: 35px;
-  width: 35px;
+  height: 100%;
+  width: 100%;
   border-radius: 50%;
   box-shadow: inset 2px 1px 9px 1px #000000;
 }

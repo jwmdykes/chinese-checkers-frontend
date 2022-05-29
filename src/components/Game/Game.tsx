@@ -28,6 +28,8 @@ interface GameState {
   gameNotJoined: boolean;
   winner: null | gameLogic.Player;
   gameID: string | null;
+  numTargetPlayers: number | null;
+  players: gameLogic.Player[];
 }
 
 class Game extends React.Component<GameProps, GameState> {
@@ -55,6 +57,8 @@ class Game extends React.Component<GameProps, GameState> {
     this.buttonSound.volume = 0.5;
 
     this.state = {
+      players: [],
+      numTargetPlayers: null,
       gameID: null,
       winner: null,
       gameIsOver: false,
@@ -318,9 +322,27 @@ class Game extends React.Component<GameProps, GameState> {
       gameID: response.game.gameID,
       gameNotJoined: false,
       turn: response.game.turn,
+      numTargetPlayers: response.game.numTargetPlayers,
+      players: response.game.players,
     });
     // listen to game udpates
     this.socket!.on('move', this.receievemove);
+    this.socket!.on('newPlayer', this.handleConnection);
+    this.socket!.on('playerLeft', this.handleDisconnection);
+  };
+
+  handleConnection = (data: gameLogic.GameObject) => {
+    console.log('new players: ', data.players);
+    this.setState({
+      players: data.players,
+    });
+  };
+
+  handleDisconnection = (data: gameLogic.GameObject) => {
+    console.log('new players: ', data.players);
+    this.setState({
+      players: data.players,
+    });
   };
 
   receievemove = (data: { gameID: string; move: gameLogic.MoveObject }) => {
@@ -407,6 +429,11 @@ class Game extends React.Component<GameProps, GameState> {
             colors={this.colors}
             turn={this.state.turn}
           ></TurnIndicator>
+        )}
+        {this.state.gameNotJoined || this.state.gameIsOver || (
+          <div className='NumPlayersIndicator'>
+            Players: {this.state.players.length}/{this.state.numTargetPlayers}
+          </div>
         )}
         {!this.state.gameIsOver || (
           <GameOverOverlay

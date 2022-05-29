@@ -694,7 +694,7 @@ export const getWinner = (
   for (let player of players) {
     let playerWon = true;
     const goal = winningPositions.get(player.id);
-    console.log(goal);
+    // console.log(goal);
     for (let square of goal!) {
       if (rows[square[1]][square[0]] !== player.id) {
         playerWon = false;

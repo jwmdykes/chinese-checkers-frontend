@@ -35,11 +35,13 @@ const sendMove = (
   gameID: string,
   move: gameLogic.MoveObject,
   socket: Socket,
+  turn: number,
   callback: (res: any) => any
 ) => {
   socket.emit('move', {
     gameID: gameID,
     move: move,
+    turn: turn,
   });
   socket.on('move', (res) => [callback(res)]);
 };

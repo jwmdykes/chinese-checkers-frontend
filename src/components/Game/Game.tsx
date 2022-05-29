@@ -31,6 +31,7 @@ interface GameState {
 }
 
 class Game extends React.Component<GameProps, GameState> {
+  moveCounter: number = 0;
   socket: Socket | null = null;
   colors!: Array<gameSettings.Color>;
   moveableSquares: null | [number, number][] = null;
@@ -95,7 +96,7 @@ class Game extends React.Component<GameProps, GameState> {
 
   checkGameOver = (rows: Array<Array<Number>>) => {
     let newWinner = gameLogic.getWinner(rows, this.props.players);
-    console.log('winner is: ', newWinner);
+    // console.log('winner is: ', newWinner);
     if (newWinner) {
       this.setState({
         gameIsOver: true,
@@ -107,7 +108,7 @@ class Game extends React.Component<GameProps, GameState> {
   changeTurn = () => {
     // change whose turn it is. If `isSinglePlayer` prop is set,
     // retain control of the pieces even after the player changes.
-    console.log('players: ', this.props.players);
+    // console.log('players: ', this.props.players);
     let newTurn = gameLogic.changeTurn(this.props.players, this.state.turn);
     let newThisPlayerID = this.props.isSinglePlayer
       ? newTurn
@@ -137,6 +138,46 @@ class Game extends React.Component<GameProps, GameState> {
           this.sendMove({ player: player, source: source, dest: dest });
         }
 
+        this.moveableSquares = null;
+        let newSelected = JSON.parse(
+          JSON.stringify(gameSettings.StartingSelected)
+        );
+
+        let newRows = gameLogic.updateRows(
+          this.state.rows,
+          source,
+          dest,
+          player
+        );
+
+        this.clickSound.play();
+
+        this.setState({
+          rows: newRows,
+          selected: newSelected,
+        });
+
+        this.checkGameOver(newRows);
+
+        this.changeTurn();
+
+        break;
+      }
+    }
+  };
+
+  tryAcceptMovedPiece = (
+    player: gameLogic.Player,
+    source: { x: number; y: number },
+    dest: { x: number; y: number }
+  ): void => {
+    // try to move the piece `source` to `dest`
+    if (!this.moveableSquares) {
+      return;
+    }
+
+    for (let square of this.moveableSquares) {
+      if (square[0] === dest.x && square[1] === dest.y) {
         this.moveableSquares = null;
         let newSelected = JSON.parse(
           JSON.stringify(gameSettings.StartingSelected)
@@ -288,12 +329,24 @@ class Game extends React.Component<GameProps, GameState> {
       data.move.source.x,
       data.move.source.y,
     ]);
-    this.tryMovePiece(data.move.player, data.move.source, data.move.dest);
+    this.tryAcceptMovedPiece(
+      data.move.player,
+      data.move.source,
+      data.move.dest
+    );
   };
 
   sendMove = (move: gameLogic.MoveObject) => {
+    console.log('sending move!', this.moveCounter);
+    this.moveCounter += 1;
     if (this.state.gameID && this.socket) {
-      API.sendMove(this.state.gameID, move, this.socket, this.receievemove);
+      API.sendMove(
+        this.state.gameID,
+        move,
+        this.socket,
+        this.state.turn,
+        this.receievemove
+      );
     }
   };
 

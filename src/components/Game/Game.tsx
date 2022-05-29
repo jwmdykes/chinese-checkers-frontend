@@ -211,10 +211,13 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnHover = (e: React.MouseEvent) => {
-    console.log('HOVER');
-    console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
+    // console.log('HOVER');
 
     const target = e.nativeEvent.target as HTMLDivElement;
+    if (!target.id) {
+      return;
+    }
+    console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
     const clicked = JSON.parse(target.id);
     let newRows = JSON.parse(JSON.stringify(this.state.rows));
     // newRows[clicked.y][clicked.x] = 2;

@@ -5,8 +5,8 @@
 }
 
 .Piece {
-  height: 100%;
-  width: 100%;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   box-shadow: inset 2px 1px 9px 1px #000000;
 }

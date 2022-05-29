@@ -239,16 +239,21 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnMouseDown = (e: React.MouseEvent) => {
-    // console.log('MOUSE DOWN');
+    console.log('MOUSE DOWN');
     e.preventDefault();
 
     // if it's not this player's turn, don't let them move
     if (this.state.turn !== this.state.thisPlayerID) {
+      console.log(
+        `turn is: ${this.state.turn} but this player is: ${this.state.thisPlayerID}`
+      );
       return;
     }
 
     const target = e.nativeEvent.target as HTMLSpanElement;
     const clicked = JSON.parse(target.id);
+
+    console.log(`clicked: ${clicked}`);
 
     // if this is a click on the current player's piece select that piece,
     if (this.state.rows[clicked.y][clicked.x] === this.state.thisPlayerID) {
@@ -281,7 +286,8 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnMouseUp = (e: React.MouseEvent) => {
-    // console.log('MOUSE UP');
+    console.log('MOUSE UP');
+    e.preventDefault();
     const target = e.nativeEvent.target as HTMLSpanElement;
     const clicked = JSON.parse(target.id);
 
@@ -432,12 +438,19 @@ class Game extends React.Component<GameProps, GameState> {
                 turn={this.state.turn}
               ></TurnIndicator>
             )}
-            {this.state.gameNotJoined || this.state.gameIsOver || (
-              <div className='NumPlayersIndicator'>
-                Players: {this.state.players.length}/
-                {this.state.numTargetPlayers}
-              </div>
-            )}
+            {this.state.gameNotJoined ||
+              this.state.gameIsOver ||
+              this.state.numTargetPlayers === this.state.players.length || (
+                <div className='NumPlayersIndicator'>
+                  <p>Game ID: {this.state.gameID?.slice(0, 6)}</p>
+                  <p>
+                    Players: {this.state.players.length}/
+                    {this.state.numTargetPlayers}
+                  </p>
+                  <p>You are Player {this.state.thisPlayerID}</p>
+                </div>
+              )}
+
             {!this.state.gameIsOver || (
               <GameOverOverlay
                 clickCallback={this.resetGame}

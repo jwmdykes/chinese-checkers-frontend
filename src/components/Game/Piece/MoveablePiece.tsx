@@ -62,8 +62,8 @@ export default class MoveablePiece extends React.Component<
 
     const rect = this.myRef.current.getBoundingClientRect();
     // console.log('down!');
-    window.addEventListener('mousemove', this.onMouseMove);
-    window.addEventListener('mouseup', this.onMouseUp);
+    window.addEventListener('pointermove', this.onMouseMove);
+    window.addEventListener('pointerup', this.onMouseUp);
     this.startOffsetX = e.clientX - rect.left;
     this.startOffsetY = e.clientY - rect.top;
     this.setState({
@@ -73,11 +73,11 @@ export default class MoveablePiece extends React.Component<
     });
   };
 
-  onMouseUp = (e: MouseEvent) => {
+  onMouseUp = (e: PointerEvent) => {
     e.preventDefault();
     // console.log('up!');
-    window.removeEventListener('mousemove', this.onMouseMove);
-    window.removeEventListener('mouseup', this.onMouseUp);
+    window.removeEventListener('pointermove', this.onMouseMove);
+    window.removeEventListener('pointerup', this.onMouseUp);
     this.setState({
       position: 'static',
     });
@@ -115,10 +115,10 @@ export default class MoveablePiece extends React.Component<
             position: this.state.position,
             pointerEvents: this.state.position === 'absolute' ? 'none' : 'auto',
           }}
-          onMouseDown={this.onMouseDown}
-          onMouseUp={this.props.mouseUpCallback}
-          onMouseOver={this.props.mouseEnterCallback}
-          onMouseLeave={this.props.mouseLeaveCallback}
+          onPointerDown={this.onMouseDown}
+          onPointerUp={this.props.mouseUpCallback}
+          onPointerOver={this.props.mouseEnterCallback}
+          onPointerLeave={this.props.mouseLeaveCallback}
         ></div>
         {this.state.position === 'static' || (
           <div

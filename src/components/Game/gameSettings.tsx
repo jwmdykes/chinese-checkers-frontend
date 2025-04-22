@@ -72,7 +72,7 @@ export const colorString = (color: Color): string => {
       '%)'
     );
   } else {
-    throw 'colors other than hsl not yet supported';
+    throw new Error('colors other than hsl not yet supported');
   }
 };
 

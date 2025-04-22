@@ -225,8 +225,6 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnLeave = (e: React.MouseEvent) => {
-    const target = e.nativeEvent.target as HTMLDivElement;
-    const clicked = JSON.parse(target.id);
     let newRows = JSON.parse(JSON.stringify(this.state.rows));
     // newRows[clicked.y][clicked.x] = 0;
 

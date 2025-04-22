@@ -54,10 +54,12 @@ const listGames = () => {
   );
 };
 
-export default {
+const API = {
   connectToAPI: connectToAPI,
   createGame: createGame,
   joinGame: joinGame,
   listGames: listGames,
   sendMove: sendMove,
 };
+
+export default API;

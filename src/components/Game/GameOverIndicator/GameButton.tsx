@@ -1,8 +1,6 @@
 // Button to join game
 import React, { Component } from 'react';
 import './GameOverOverlay.css';
-import * as gameLogic from '../gameLogic';
-import * as gameSettings from '../gameSettings';
 
 interface GameButtonButtonProps {
   text: string;

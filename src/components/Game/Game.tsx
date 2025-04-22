@@ -211,13 +211,10 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnHover = (e: React.MouseEvent) => {
-    // console.log('HOVER');
-
     const target = e.nativeEvent.target as HTMLDivElement;
     if (!target.id) {
       return;
     }
-    console.log('HOVER!', e.nativeEvent.target as HTMLDivElement);
     const clicked = JSON.parse(target.id);
     let newRows = JSON.parse(JSON.stringify(this.state.rows));
     // newRows[clicked.y][clicked.x] = 2;
@@ -228,8 +225,6 @@ class Game extends React.Component<GameProps, GameState> {
   };
 
   pieceOnLeave = (e: React.MouseEvent) => {
-    // console.log('STOP HOVER!', e.nativeEvent.target as HTMLDivElement);
-
     const target = e.nativeEvent.target as HTMLDivElement;
     const clicked = JSON.parse(target.id);
     let newRows = JSON.parse(JSON.stringify(this.state.rows));
@@ -412,11 +407,11 @@ class Game extends React.Component<GameProps, GameState> {
   render() {
     // console.log(this.state.rows);
     return (
-      <div className='Align'>
-        <div className='GameContainer'>
-          <div className='Game'>
+      <div className="Align">
+        <div className="GameContainer">
+          <div className="Game">
             <div
-              className='BlurContainer'
+              className="BlurContainer"
               style={{
                 filter:
                   this.state.gameIsOver || this.state.gameNotJoined
@@ -444,7 +439,8 @@ class Game extends React.Component<GameProps, GameState> {
             {this.state.gameNotJoined ||
               this.state.gameIsOver ||
               this.state.numTargetPlayers === this.state.players.length || (
-                <div className='NumPlayersIndicator'>
+                <div className="NumPlayersIndicator">
+                  <p>Open Another window to play against yourself.</p>
                   <p>Game ID: {this.state.gameID?.slice(0, 6)}</p>
                   <p>
                     Players: {this.state.players.length}/
@@ -464,7 +460,7 @@ class Game extends React.Component<GameProps, GameState> {
             {!this.state.gameNotJoined || (
               <GameButton
                 extraClassNames={classNames('JoinGameButton')}
-                text='Create Or Join Game'
+                text="Create Or Join Game"
                 clickCallback={this.sendCreateOrJoinGame}
               ></GameButton>
             )}

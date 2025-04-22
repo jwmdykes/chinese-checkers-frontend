@@ -48,7 +48,7 @@
 }
 
 .NumPlayersIndicator {
-  font-size: 50px;
+  font-size: 40px;
   text-align: center;
   background: #9e9999;
   position: absolute;
@@ -60,7 +60,7 @@
   margin-bottom: auto;
   margin-left: auto;
   margin-right: auto;
-  height: 400px;
+  height: 450px;
   width: 450px;
   padding: 10px;
   display: flex;

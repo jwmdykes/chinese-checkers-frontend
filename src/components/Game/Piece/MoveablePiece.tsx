@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React from 'react';
 import './Piece.css';
 import * as gameSettings from '../gameSettings';
 
@@ -102,10 +102,10 @@ export default class MoveablePiece extends React.Component<
     );
     shadowColor.brightness = shadowColor.brightness - 30;
     return (
-      <div className='PlaceHolder' id={this.props.id}>
+      <div className="PlaceHolder" id={this.props.id}>
         <div
           ref={this.myRef}
-          className='Piece'
+          className="Piece"
           id={this.props.id}
           style={{
             background: gameSettings.colorString(this.props.color),
@@ -123,7 +123,7 @@ export default class MoveablePiece extends React.Component<
         ></div>
         {this.state.position === 'static' || (
           <div
-            className='Piece'
+            className="Piece"
             id={'ghost:' + this.props.id}
             style={{
               background: gameSettings.colorString(gameSettings.colors.empty),
